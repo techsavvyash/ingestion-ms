@@ -1,0 +1,36 @@
+[
+    {
+  
+          "name": "IfDimensionNameIsEmpty",
+          "description": "If Dimension Name is empty",
+          "function_name": "executeQueryAndReturnResults",
+          "input": {
+            "body":{
+                "dimension_name": "",
+                "dimension": {
+                  "name": "Shimla",
+                  "district_id": "SH123"
+                }
+            }
+          },
+          "output": "No Dimension Found"
+        
+    },
+    {
+      "name": "IfDimensionObjectIsEmpty",
+      "description": "If Dimension Object is empty",
+      "function_name": "executeQueryAndReturnResults",
+      "input": {
+        "body":{
+          "body":{
+            "dimension_name": "district",
+            "dimension": {
+             
+            }
+          }
+        }
+      },
+      "output": "No Dimension Found"
+    }
+    
+  ]
