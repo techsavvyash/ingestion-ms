@@ -24,6 +24,26 @@ CREATE TABLE IF NOT EXISTS spec.dimension (
   dimension_data JSON
 );
 
+CREATE TABLE IF NOT EXISTS spec.transformer (
+  pid                  INT       GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  created_at           TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at           TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  transformer_file     VARCHAR,
+  transformer_function VARCHAR,
+  UNIQUE (transformer_file, transformer_function)
+);
+
+CREATE TABLE IF NOT EXISTS spec.pipeline (
+  pid             INT       GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  created_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  pipeline_name   VARCHAR UNIQUE,
+  event_pid       INT NOT NULL REFERENCES spec.event (pid),
+  dataset_pid     INT NOT NULL REFERENCES spec.dataset (pid),
+  dimension_pid   INT NOT NULL REFERENCES spec.dimension (pid),
+  transformer_pid INT NOT NULL REFERENCES spec.transformer (pid)
+);
+
 CREATE SCHEMA IF NOT EXISTS ingestion;
 
 CREATE TABLE IF NOT EXISTS ingestion.student_count_by_school_and_grade (
@@ -139,3 +159,43 @@ VALUES ('district', '{
     ]
   }
 }');
+
+INSERT INTO spec.dimension (dimension_name, dimension_data)
+VALUES ('district', '{
+  "ingestion_type": "dimension",
+  "input": {
+    "type": "object",
+    "properties": {
+      "dimension_name": {
+        "type": "string"
+      },
+      "dimension": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "district_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "district_id"
+        ]
+      }
+    },
+    "required": [
+      "dimension_name",
+      "dimension"
+    ]
+  }
+}');
+
+INSERT INTO spec.transformer(
+  transformer_file, transformer_function)
+VALUES ('sum_transformer.py','studCount');
+
+INSERT INTO spec.pipeline(
+  event_pid, dataset_pid, dimension_pid, transformer_pid)
+VALUES (1,1,1,1);

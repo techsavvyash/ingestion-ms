@@ -28,7 +28,7 @@ async function genericTestImplementor() {
         if (testcaseObj) {
             try {
                 const result = await inputFunctions[testcaseObj.function_name](testcaseObj.input);
-                expect(result.error[0]).toEqual(testcaseObj.output);
+                expect(result.message).toEqual(testcaseObj.output);
             } catch (e) {
                 console.error(__filename.slice(__dirname.length + 1), ' : ', testcaseObj.name, e);
                 expect(true).toBe(false);

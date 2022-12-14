@@ -1,18 +1,17 @@
-'use strict';
-const express = require('express');
-const router = require('./routes/routes');
-const app = express();
-
 require('dotenv').config();
 
-console.log('app.: ', process.env);
+const fastify = require('fastify')({ logger: false });
+const PORT = 8080;
+fastify.register(require('./routes/routes'));
 
-app.use(express.json());
-app.use(express.urlencoded({extended: false}));
+const start = async () => {
+    try {
+        await fastify.listen(PORT)
+    }
+    catch (error) {
+        fastify.log.error(error);
+        process.exit(1);
+    }
+}
 
-app.use('/ingestion', router);
-
-
-module.exports = {
-    app
-};
+start();
