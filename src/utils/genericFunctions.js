@@ -1,17 +1,16 @@
 const ObjectsToCsv = require('objects-to-csv');
 const Ajv = require("ajv");
-const ajv = new Ajv();
+const ajv = new Ajv({allErrors: true});
 
 module.exports = {
     writeToCSVFile,
     ajvValidator
 };
 
-async function writeToCSVFile(fileName, inputData) {
+async function writeToCSVFile(fileName, inputArray) {
     try {
-        const csv = new ObjectsToCsv(inputData);
+        const csv = new ObjectsToCsv(inputArray);
         let response = await csv.toDisk(`./${fileName}.csv`, {append: true});
-        console.log('genericFunctions.writeToCSVFile: ', response);
         return response;
     } catch (e) {
         console.error('genericFunctions.writeToCSVFile: ', e.message);
@@ -20,13 +19,10 @@ async function writeToCSVFile(fileName, inputData) {
 }
 
 async function ajvValidator(schema, inputData) {
-    const validate = ajv.compile(schema);
-    console.log('genericFunctions.schema: ', schema);
-    const valid = validate(inputData);
-    console.log('genericFunctions.inputData: ', inputData);
-    console.log('genericFunctions.ajvValidator: ', valid);
-    if (valid) {
-        return true;
+    const isValid = ajv.validate(schema, inputData);
+    if (isValid) {
+        return inputData;
+    } else {
+        return {errors: ajv.errors};
     }
-    return validate.errors;
 }

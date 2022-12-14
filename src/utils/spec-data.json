@@ -5,19 +5,33 @@
       "input": {
         "type": "object",
         "properties": {
-          "eventName": {
+          "event_name": {
             "type": "string"
           },
-          "school_id": {
-            "type": "string"
-          },
-          "grade": {
-            "type": "string"
-          },
-          "count": {
-            "type": "string"
+          "event": {
+            "type": "object",
+            "properties": {
+              "school_id": {
+                "type": "string"
+              },
+              "grade": {
+                "type": "string"
+              },
+              "count": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "school_id",
+              "grade",
+              "count"
+            ]
           }
-        }
+        },
+        "required": [
+          "event_name",
+          "event"
+        ]
       }
     },
     {
