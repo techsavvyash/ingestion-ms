@@ -21,7 +21,7 @@ module.exports = {
                 }
             } else {
                 return {
-                    message: "No Event Found"
+                    message: "No Dataset Found"
                 }
             }
         } catch (e) {

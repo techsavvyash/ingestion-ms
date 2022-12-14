@@ -107,3 +107,35 @@ VALUES ('student_count_by_school_and_grade', '{
     ]
   }
 }');
+
+INSERT INTO spec.dimension (dimension_name, dimension_data)
+VALUES ('district', '{
+  "ingestion_type": "dimension",
+  "input": {
+    "type": "object",
+    "properties": {
+      "dimension_name": {
+        "type": "string"
+      },
+      "dimension": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "district_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "district_id"
+        ]
+      }
+    },
+    "required": [
+      "dimension_name",
+      "dimension"
+    ]
+  }
+}');
