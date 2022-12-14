@@ -1,6 +1,7 @@
-require('dotenv').config();
-process.env['JEST_TEST'] = 'true';
+const path = require('path');
 
+require('dotenv').config({ path: path.resolve(__dirname, '../../../.env') });
+process.env['JEST_TEST'] = 'true';
 const inputFunctions = require('./create-dimension-impl');
 const inputJson = require('../../../json/create-dimension.json');
 

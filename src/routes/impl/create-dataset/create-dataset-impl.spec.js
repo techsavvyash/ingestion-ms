@@ -1,6 +1,6 @@
-require('dotenv').config();
+const path = require('path');
+require('dotenv').config({ path: path.resolve(__dirname, '../../../.env') });
 process.env['JEST_TEST'] = 'true';
-
 const inputFunctions = require('./create-dataset-impl');
 const inputJson = require('../../../json/create-dataset.json');
 
