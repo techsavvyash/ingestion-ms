@@ -34,5 +34,15 @@ router.post('/dimension', async function (req, res) {
     }
 });
 
+router.post('/pipeline', async function (req, res) {
+    try {
+        const result = await dimensionRoute.executeQueryAndReturnResults(req);
+        res.send(result);
+    } catch (e) {
+        console.error(`ingestion-routes./dimension: `, e);
+        res.status(400).send('Bad Request ' + e.message);
+    }
+});
+
 
 module.exports = router;
