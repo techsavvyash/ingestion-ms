@@ -1,23 +1,29 @@
 const {query, pool} = require('../../../utils/dbConfig');
 const genericFunction = require('../../../utils/genericFunctions');
-const specData = require('../../../utils/spec-data');
+const datasetQueries = require('../../../queries/dataset_queries');
 
 module.exports = {
     executeQueryAndReturnResults: async (req) => {
         try {
             const reqBody = req.body;
             const datasetName = reqBody.dataset_name;
-            const schema = specData.properties.find(obj => obj.ingestion_type === 'dataset');
-            const isValidSchema = await genericFunction.ajvValidator(schema.input, reqBody);
-            if (!isValidSchema.errors) {
-                await genericFunction.writeToCSVFile(datasetName, [reqBody.event]);
-                return {
-                    message: "Dataset Added Successfully"
+            const queryStr = await datasetQueries.getDatasetSpec(datasetName);
+            const queryResult = await query(queryStr.query, queryStr.values);
+            if (queryResult.rowCount === 1) {
+                const isValidSchema = await genericFunction.ajvValidator(queryResult.rows[0].dataset_data.input, reqBody);
+                if (!isValidSchema.errors) {
+                    await genericFunction.writeToCSVFile(datasetName, [reqBody.dataset]);
+                    return {
+                        message: "Dataset Added Successfully"
+                    }
+                } else {
+                    return isValidSchema
                 }
             } else {
-                return isValidSchema
+                return {
+                    message: "No Event Found"
+                }
             }
-
         } catch (e) {
             console.error('create-dataset-impl.executeQueryAndReturnResults: ', e.message);
             throw new Error(e);

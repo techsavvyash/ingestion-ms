@@ -84,17 +84,20 @@ VALUES ('student_count_by_school_and_grade', '{
       "dataset": {
         "type": "object",
         "properties": {
-          "event_name": {
+          "school_id": {
             "type": "string"
           },
-          "dimension_name": {
+          "grade": {
+            "type": "string"
+          },
+          "student_count": {
             "type": "string"
           }
         },
         "required": [
           "school_id",
           "grade",
-          "count"
+          "student_count"
         ]
       }
     },
