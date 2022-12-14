@@ -1,5 +1,10 @@
-require('dotenv').config();
+const path = require('path');
+
+console.log('create-event-impl.spec.__dirname: ', __dirname);
+require('dotenv').config({ path: path.resolve(__dirname, '../../../.env') });
+
 process.env['JEST_TEST'] = 'true';
+
 
 const inputFunctions = require('./create-event-impl');
 const inputJson = require('../../../json/create-event');
@@ -27,7 +32,7 @@ async function genericTestImplementor() {
         if (testcaseObj) {
             try {
                 const result = await inputFunctions[testcaseObj.function_name](testcaseObj.input);
-                expect(result.error[0]).toEqual(testcaseObj.output);
+                expect(result.message).toEqual(testcaseObj.output);
             } catch (e) {
                 console.error(__filename.slice(__dirname.length + 1), ' : ', testcaseObj.name, e);
                 expect(true).toBe(false);
