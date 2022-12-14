@@ -1,0 +1,28 @@
+{
+    "properties": [
+        {
+            "ingestion_type": "event",
+            "event_name": "string",
+            "school_id": "string",
+            "grade": "string",
+            "count": "string"
+        },
+        {
+            "ingestion_type": "dimension",
+            "dimension_name": "string",
+            "name": "string",
+            "district_id": "string"
+        },
+        {
+            "ingestion_type": "dataset",
+            "dataset_name": "string",
+            "event_name": "string",
+            "dimension_name": "string"
+        },
+        {
+            "ingestion_type": "pipeline",
+            "pipeline_name": "string",
+            "type": "string"
+        }
+    ]
+}
