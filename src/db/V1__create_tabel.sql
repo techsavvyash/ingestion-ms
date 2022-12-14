@@ -2,6 +2,8 @@ CREATE SCHEMA IF NOT EXISTS spec;
 
 CREATE TABLE IF NOT EXISTS spec.event (
   pid        INT       GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  is_deleted BOOLEAN   DEFAULT FALSE,
+  event_by   INT NOT NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   event_name VARCHAR UNIQUE,
@@ -10,6 +12,8 @@ CREATE TABLE IF NOT EXISTS spec.event (
 
 CREATE TABLE IF NOT EXISTS spec.dataset (
   pid          INT       GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  is_deleted BOOLEAN   DEFAULT FALSE,
+  event_by   INT NOT NULL,
   created_at   TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at   TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   dataset_name VARCHAR UNIQUE,
@@ -18,6 +22,8 @@ CREATE TABLE IF NOT EXISTS spec.dataset (
 
 CREATE TABLE IF NOT EXISTS spec.dimension (
   pid            INT       GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  is_deleted BOOLEAN   DEFAULT FALSE,
+  event_by   INT NOT NULL,
   created_at     TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at     TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   dimension_name VARCHAR UNIQUE,
@@ -26,6 +32,8 @@ CREATE TABLE IF NOT EXISTS spec.dimension (
 
 CREATE TABLE IF NOT EXISTS spec.transformer (
   pid                  INT       GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  is_deleted BOOLEAN   DEFAULT FALSE,
+  event_by   INT NOT NULL,
   created_at           TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at           TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   transformer_file     VARCHAR,
@@ -35,6 +43,8 @@ CREATE TABLE IF NOT EXISTS spec.transformer (
 
 CREATE TABLE IF NOT EXISTS spec.pipeline (
   pid             INT       GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  is_deleted BOOLEAN   DEFAULT FALSE,
+  event_by   INT NOT NULL,
   created_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   pipeline_name   VARCHAR UNIQUE,
@@ -48,6 +58,8 @@ CREATE SCHEMA IF NOT EXISTS ingestion;
 
 CREATE TABLE IF NOT EXISTS ingestion.student_count_by_school_and_grade (
   pid           INT       GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  is_deleted BOOLEAN   DEFAULT FALSE,
+  event_by   INT NOT NULL,
   created_at    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   school_id     VARCHAR,
@@ -192,10 +204,10 @@ VALUES ('district', '{
   }
 }');
 
-INSERT INTO spec.transformer(
+INSERT INTO spec.transformer (
   transformer_file, transformer_function)
-VALUES ('sum_transformer.py','studCount');
+VALUES ('sum_transformer.py', 'studCount');
 
-INSERT INTO spec.pipeline(
+INSERT INTO spec.pipeline (
   event_pid, dataset_pid, dimension_pid, transformer_pid)
-VALUES (1,1,1,1);
+VALUES (1, 1, 1, 1);
