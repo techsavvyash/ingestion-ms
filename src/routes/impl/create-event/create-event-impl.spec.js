@@ -44,4 +44,7 @@ describe("createEvent", () => {
     it("IfEventNameIsEmpty", async () => {
         await genericTestImplementor();
     });
+    it("IfEventObjectIsEmpty", async () => {
+        await genericTestImplementor();
+    });
 });
