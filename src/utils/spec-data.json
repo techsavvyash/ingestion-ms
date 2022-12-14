@@ -1,28 +1,47 @@
 {
-    "properties": [
-        {
-            "ingestion_type": "event",
-            "event_name": "string",
-            "school_id": "string",
-            "grade": "string",
-            "count": "string"
-        },
-        {
-            "ingestion_type": "dimension",
-            "dimension_name": "string",
-            "name": "string",
-            "district_id": "string"
-        },
-        {
-            "ingestion_type": "dataset",
-            "dataset_name": "string",
-            "event_name": "string",
-            "dimension_name": "string"
-        },
-        {
-            "ingestion_type": "pipeline",
-            "pipeline_name": "string",
+  "properties": [
+    {
+      "ingestion_type": "event",
+      "input": {
+        "type": "object",
+        "properties": {
+          "eventName": {
             "type": "string"
+          },
+          "school_id": {
+            "type": "string"
+          },
+          "grade": {
+            "type": "string"
+          },
+          "count": {
+            "type": "string"
+          }
         }
-    ]
+      }
+    },
+    {
+      "ingestion_type": "dimension",
+      "input": {
+        "dimension_name": "string",
+        "name": "string",
+        "district_id": "string"
+      }
+    },
+    {
+      "ingestion_type": "dataset",
+      "input": {
+        "dataset_name": "string",
+        "event_name": "string",
+        "dimension_name": "string"
+      }
+    },
+    {
+      "ingestion_type": "pipeline",
+      "input": {
+        "pipeline_name": "string",
+        "type": "string"
+      }
+    }
+  ]
 }

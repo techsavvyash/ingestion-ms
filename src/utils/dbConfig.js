@@ -1,14 +1,27 @@
 const {pg, Pool} = require('pg');
 
 let pool;
+const pgConfigTemp = {
+    user: process.env.PG_USER || (() => {
+        throw new Error('NO_DB_USER_PASSED_IN_ENV');
+    })(),
+    password: process.env.PG_PASSWORD || (() => {
+        throw new Error('NO_DB_PWD_PASSED_IN_ENV');
+    })(),
+    database: process.env.PG_DB || (() => {
+        throw new Error('NO_DB_PASSED_IN_ENV');
+    })(),
+    host: process.env.PG_HOST || 'localhost'
+};
+
 pool = new Pool(pgConfigTemp);
 
 try {
     if (!process.env.JEST_TEST) {
         pool.query('SELECT CURRENT_TIMESTAMP as conTime').then(data => {
-            console.log(`dbConfig:DB CONNECTION SUCCESSFUL: ${  msName  } `, data.rows[0]);
+            console.log(`dbConfig:DB CONNECTION SUCCESSFUL: `, data.rows[0]);
         }).catch(err => {
-            console.error(`dbConfig:DB Connection FAILED: ${  msName  } `, err);
+            console.error(`dbConfig:DB Connection FAILED: `, err);
         });
     }
 } catch (e) {
