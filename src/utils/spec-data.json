@@ -45,9 +45,32 @@
     {
       "ingestion_type": "dataset",
       "input": {
-        "dataset_name": "string",
-        "event_name": "string",
-        "dimension_name": "string"
+        "type": "object",
+        "properties": {
+          "dataset_name": {
+            "type": "string"
+          },
+          "dataset": {
+            "type": "object",
+            "properties": {
+              "event_name": {
+                "type": "string"
+              },
+              "dimension_name": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "school_id",
+              "grade",
+              "count"
+            ]
+          }
+        },
+        "required": [
+          "dataset_name",
+          "dataset"
+        ]
       }
     },
     {

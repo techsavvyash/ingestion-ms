@@ -9,7 +9,17 @@ router.post('/event', async function (req, res) {
         const result = await eventRoute.executeQueryAndReturnResults(req);
         res.send(result);
     } catch (e) {
-        console.error(`cash-routes./transaction_request: `, e);
+        console.error(`ingestion-routes./event: `, e);
+        res.status(400).send('Bad Request ' + e.message);
+    }
+});
+
+router.post('/dataset', async function (req, res) {
+    try {
+        const result = await datasetRoute.executeQueryAndReturnResults(req);
+        res.send(result);
+    } catch (e) {
+        console.error(`ingestion-routes./dataset: `, e);
         res.status(400).send('Bad Request ' + e.message);
     }
 });
