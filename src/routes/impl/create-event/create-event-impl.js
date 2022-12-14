@@ -10,7 +10,10 @@ module.exports = {
             const schema = specData.properties.find(obj => obj.ingestion_type === 'event');
             const isValidSchema = await genericFunction.ajvValidator(schema.input, reqBody);
             if (!isValidSchema.errors) {
-                const response = await genericFunction.writeToCSVFile(eventName, [reqBody.event])
+                await genericFunction.writeToCSVFile(eventName, [reqBody.event]);
+                return {
+                    message: "Event Added Successfully"
+                }
             } else {
                 return isValidSchema
             }
