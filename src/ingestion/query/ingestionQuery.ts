@@ -1,6 +1,6 @@
 
 
-export const IngestionDatasetQuary = {
+export const IngestionDatasetQuery = {
 
     async getDataset(datasetName) {
         

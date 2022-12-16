@@ -1,6 +1,7 @@
+import { Dataset, Dimension, IEvent } from './../interfaces/Ingestion-data';
 import { Body, Controller, Post } from '@nestjs/common';
 import { IngestionService } from '../services/ingestion.service';
-import { IngestionDatasetQuary } from '../query/ingestionQuary';
+import { IngestionDatasetQuery } from '../query/ingestionQuery';
 import { DatabaseService } from 'src/database/database.service';
 
 @Controller('ingestion')
@@ -8,11 +9,11 @@ export class IngestionController {
 
     constructor(private service: IngestionService, private DatabaseService: DatabaseService) { }
     @Post('dataset')
-    async createDataset(@Body() inputData) {
+    async createDataset(@Body() inputData:Dataset) {
         try {
             const datasetName = inputData.dataset_name;
             console.log(datasetName);
-            const queryStr = await IngestionDatasetQuary.getDataset(datasetName);
+            const queryStr = await IngestionDatasetQuery.getDataset(datasetName);
             const queryResult = await this.DatabaseService.executeQuery(queryStr.query, queryStr.values);
             if (queryResult.length === 1) {
                 const isValidSchema = await this.service.ajvValidator(queryResult[0].dataset_data.input, inputData);
@@ -45,11 +46,11 @@ export class IngestionController {
     }
 
     @Post('dimension')
-    async createDimenshion(@Body() inputData) {
+    async createDimenshion(@Body() inputData:Dimension) {
         try {
 
             const dimensionName = inputData.dimension_name;
-            const queryStr = await IngestionDatasetQuary.getDimesnsion(dimensionName);
+            const queryStr = await IngestionDatasetQuery.getDimesnsion(dimensionName);
             const queryResult = await this.DatabaseService.executeQuery(queryStr.query, queryStr.values);
             if (queryResult.length === 1) {
                 const isValidSchema = await this.service.ajvValidator(queryResult[0].dimension_data.input, inputData);
@@ -75,12 +76,12 @@ export class IngestionController {
     }
 
     @Post('event')
-    async createEvent(@Body() inputData) {
+    async createEvent(@Body() inputData:IEvent) {
 
         try {
             
             const eventName = inputData.event_name;
-            const queryStr = await IngestionDatasetQuary.getEvents(eventName);
+            const queryStr = await IngestionDatasetQuery.getEvents(eventName);
             const queryResult = await this.DatabaseService.executeQuery(queryStr.query, queryStr.values);
             if (queryResult.length === 1) {
                 const isValidSchema = await this.service.ajvValidator(queryResult[0].event_data.input, inputData);
