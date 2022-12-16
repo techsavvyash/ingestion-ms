@@ -12,3 +12,8 @@ export interface Dataset{
     dataset_name: string,
     dataset:JSON
 }
+
+export interface Pipeline{
+    pipeline_name: string
+    schedule_type: string
+}
