@@ -5,7 +5,7 @@ import { IngestionDatasetQuery } from '../query/ingestionQuery';
 import { DatabaseService } from 'src/database/database.service';
 import { HttpService } from '@nestjs/axios';
 
-@Controller('injestion')
+@Controller('ingestion')
 export class IngestionController {
 
     constructor(private service: IngestionService, private DatabaseService: DatabaseService, private http: HttpService) { }
