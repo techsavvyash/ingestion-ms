@@ -5,12 +5,12 @@ import { IngestionDatasetQuery } from '../query/ingestionQuery';
 import { DatabaseService } from 'src/database/database.service';
 import { HttpService } from '@nestjs/axios';
 
-@Controller('injestion')
+@Controller('ingestion')
 export class IngestionController {
 
     constructor(private service: IngestionService, private DatabaseService: DatabaseService, private http: HttpService) { }
     @Post('dataset')
-    async createDataset(@Body() inputData:Dataset) {
+    async createDataset(@Body() inputData: Dataset) {
         try {
             const datasetName = inputData.dataset_name;
             console.log(datasetName);
@@ -18,8 +18,6 @@ export class IngestionController {
             const queryResult = await this.DatabaseService.executeQuery(queryStr.query, queryStr.values);
             if (queryResult.length === 1) {
                 const isValidSchema = await this.service.ajvValidator(queryResult[0].dataset_data.input, inputData);
-                console.log(queryResult[0].dataset_data.input.properties.dataset.properties);
-                console.log("Input data",inputData);
                 if (!isValidSchema['message']) {
                     await this.service.writeToCSVFile(datasetName, [inputData.dataset]);
                     return {
@@ -47,7 +45,7 @@ export class IngestionController {
     }
 
     @Post('dimension')
-    async createDimenshion(@Body() inputData:Dimension) {
+    async createDimenshion(@Body() inputData: Dimension) {
         try {
 
             const dimensionName = inputData.dimension_name;
@@ -55,8 +53,6 @@ export class IngestionController {
             const queryResult = await this.DatabaseService.executeQuery(queryStr.query, queryStr.values);
             if (queryResult.length === 1) {
                 const isValidSchema = await this.service.ajvValidator(queryResult[0].dimension_data.input, inputData);
-                console.log(queryResult[0].dimension_data.input);
-                console.log("Input data",inputData);
                 if (!isValidSchema['message']) {
                     await this.service.writeToCSVFile(dimensionName, [inputData.dimension]);
                     return {
@@ -77,16 +73,14 @@ export class IngestionController {
     }
 
     @Post('event')
-    async createEvent(@Body() inputData:IEvent) {
-
+    async createEvent(@Body() inputData: IEvent) {
         try {
-            
+
             const eventName = inputData.event_name;
             const queryStr = await IngestionDatasetQuery.getEvents(eventName);
             const queryResult = await this.DatabaseService.executeQuery(queryStr.query, queryStr.values);
             if (queryResult.length === 1) {
                 const isValidSchema = await this.service.ajvValidator(queryResult[0].event_data.input, inputData);
-                console.log(queryResult[0].event_data.input);
                 if (!isValidSchema['errors']) {
                     await this.service.writeToCSVFile(eventName, [inputData.event]);
                     return {
@@ -108,58 +102,81 @@ export class IngestionController {
 
     @Post('pipeline')
     async pipeline(@Body() pipelineData: Pipeline) {
-        let nifi_root_pg_id, pg_list, pg_source;
+        try {
+            const pipelineName = pipelineData.pipeline_name
+            const queryStr = await IngestionDatasetQuery.getPipelineSpec(pipelineName);
+            const queryResult = await this.DatabaseService.executeQuery(queryStr.query, queryStr.values);
+            if (queryResult.length === 1) {
+                // console.log('result', queryResult[0].transformer_file)
+                const transformer_file = queryResult[0].transformer_file
+                let nifi_root_pg_id, pg_list, pg_source
 
-        const processor_group_name = pipelineData.pipeline_name;
-
-        await this.addProcessorGroup(processor_group_name)
-
-        this.http.get(`${process.env.NIFI_IP}:${process.env.NIFI_PORT}/nifi-api/process-groups/root`).subscribe((res: any) => {
-            nifi_root_pg_id = res.data.component.id;
-            this.http.get(`${process.env.NIFI_IP}:${process.env.NIFI_PORT}/nifi-api/flow/process-groups/${nifi_root_pg_id}`).subscribe(async (res: any) => {
-                pg_list = res.data
-
-                pg_list['processGroupFlow']['flow']['processGroups'].forEach((pg: any) => {
-                    if (pg['component']['name'] == processor_group_name) {
-                        pg_source = pg
-                    }
-                });
-
-                await this.addProcessor('org.apache.nifi.processors.standard.GenerateFlowFile', 'generateFlowFile', pg_source['component']['id'])
-                await this.addProcessor('org.apache.nifi.processors.standard.ExecuteStreamCommand', 'pythonCode', pg_source['component']['id'])
-                await this.addProcessor('org.apache.nifi.processors.standard.LogMessage', 'successLogMessage', pg_source['component']['id'])
-                await this.addProcessor('org.apache.nifi.processors.standard.LogMessage', 'failedLogMessage', pg_source['component']['id'])
-
-                const generateFlowFileID = await this.getProcessorSourceId(pg_source['component']['id'], 'generateFlowFile')
-                const pythonCodeID = await this.getProcessorSourceId(pg_source['component']['id'], 'pythonCode')
-                const successLogMessageID = await this.getProcessorSourceId(pg_source['component']['id'], 'successLogMessage')
-                const failedLogMessageID = await this.getProcessorSourceId(pg_source['component']['id'], 'failedLogMessage')
-
-                const success_relationship = ["success"]
-                const python_failure_relationship = ["nonzero status"]
-                const python_success_relationship = ["output stream"]
-                const autoterminate_relationship = ["success"]
-
-                await this.connect(generateFlowFileID, pythonCodeID, success_relationship, pg_source['component']['id'])
-                await this.connect(pythonCodeID, successLogMessageID, python_success_relationship, pg_source['component']['id'])
-                await this.connect(pythonCodeID, failedLogMessageID, python_failure_relationship, pg_source['component']['id'])
-                await this.connect(successLogMessageID, successLogMessageID, autoterminate_relationship, pg_source['component']['id'])
-                await this.connect(failedLogMessageID, failedLogMessageID, autoterminate_relationship, pg_source['component']['id'])
-
-                await this.updateProcessorProperty(pg_source['component']['id'], 'pythonCode');
-                await this.updateProcessorProperty(pg_source['component']['id'], 'generateFlowFile');
-
-
-                const data = {
-                    "id": pg_source['component']['id'],
-                    "state": "RUNNING",  // RUNNING or STOP
-                    "disconnectedNodeAcknowledged": false
+                const processor_group_name = pipelineData.pipeline_name;
+                const config = {
+                    headers: { "Content-Type": "application/json" }
                 }
-                this.http.put(`${process.env.NIFI_IP}:${process.env.NIFI_PORT}/nifi-api/flow/process-groups/${pg_source['component']['id']}`, data).subscribe((res: any) => {
-                    console.log(res.data)
+
+                await this.addProcessorGroup(processor_group_name)
+
+                this.http.get(`${process.env.NIFI_IP}:${process.env.NIFI_PORT}/nifi-api/process-groups/root`, config).subscribe((res: any) => {
+                    nifi_root_pg_id = res.data.component.id;
+                    this.http.get(`${process.env.NIFI_IP}:${process.env.NIFI_PORT}/nifi-api/flow/process-groups/${nifi_root_pg_id}`, config).subscribe(async (res: any) => {
+                        pg_list = res.data
+
+                        pg_list['processGroupFlow']['flow']['processGroups'].forEach((pg: any) => {
+                            if (pg['component']['name'] == processor_group_name) {
+                                pg_source = pg
+                            }
+                        });
+
+                        await this.addProcessor('org.apache.nifi.processors.standard.GenerateFlowFile', 'generateFlowFile', pg_source['component']['id'])
+                        await this.addProcessor('org.apache.nifi.processors.standard.ExecuteStreamCommand', 'pythonCode', pg_source['component']['id'])
+                        await this.addProcessor('org.apache.nifi.processors.standard.LogMessage', 'successLogMessage', pg_source['component']['id'])
+                        await this.addProcessor('org.apache.nifi.processors.standard.LogMessage', 'failedLogMessage', pg_source['component']['id'])
+
+                        const generateFlowFileID = await this.getProcessorSourceId(pg_source['component']['id'], 'generateFlowFile')
+                        const pythonCodeID = await this.getProcessorSourceId(pg_source['component']['id'], 'pythonCode')
+                        const successLogMessageID = await this.getProcessorSourceId(pg_source['component']['id'], 'successLogMessage')
+                        const failedLogMessageID = await this.getProcessorSourceId(pg_source['component']['id'], 'failedLogMessage')
+
+                        const success_relationship = ["success"]
+                        const python_failure_relationship = ["nonzero status"]
+                        const python_success_relationship = ["output stream"]
+                        const autoterminate_relationship = ["success"]
+
+                        await this.connect(generateFlowFileID, pythonCodeID, success_relationship, pg_source['component']['id'])
+                        await this.connect(pythonCodeID, successLogMessageID, python_success_relationship, pg_source['component']['id'])
+                        await this.connect(pythonCodeID, failedLogMessageID, python_failure_relationship, pg_source['component']['id'])
+                        await this.connect(successLogMessageID, successLogMessageID, autoterminate_relationship, pg_source['component']['id'])
+                        await this.connect(failedLogMessageID, failedLogMessageID, autoterminate_relationship, pg_source['component']['id'])
+
+                        await this.updateProcessorProperty(pg_source['component']['id'], 'pythonCode', transformer_file);
+                        await this.updateProcessorProperty(pg_source['component']['id'], 'generateFlowFile', transformer_file);
+
+
+                        const data = {
+                            "id": pg_source['component']['id'],
+                            "state": "RUNNING",  // RUNNING or STOP
+                            "disconnectedNodeAcknowledged": false
+                        }
+
+                        this.http.put(`${process.env.NIFI_IP}:${process.env.NIFI_PORT}/nifi-api/flow/process-groups/${pg_source['component']['id']}`, data, config).subscribe((res: any) => {
+                            console.log(res.data)
+                        })
+                    })
                 })
-            })
-        })
+            }
+            else {
+                return {
+                    message: "No Pipeline Found"
+                }
+            }
+        }
+
+        catch (e) {
+
+            throw new Error(e);
+        }
     }
 
     addProcessorGroup(processor_group_name: string) {
@@ -302,7 +319,7 @@ export class IngestionController {
         })
     }
 
-    updateProcessorProperty(pg_source_id, processor_name) {
+    updateProcessorProperty(pg_source_id, processor_name, transformer_file) {
         return new Promise<any>(async (resolve, reject) => {
             const pg_ports = await this.getProcessorGroupPorts(pg_source_id)
             if (pg_ports) {
@@ -328,7 +345,7 @@ export class IngestionController {
                                 "disconnectedNodeAcknowledged": "False"
                             }
                         }
-                        else{
+                        else {
                             update_processor_property_body = {
                                 "component": {
                                     "id": processor['component']['id'],
@@ -338,7 +355,7 @@ export class IngestionController {
                                             "original"
                                         ],
                                         "properties": {
-                                            "Command Arguments": 'kpi.py', //python transformer code needed
+                                            "Command Arguments": transformer_file, //python transformer code needed
                                             "Command Path": "/opt/cqube/emission_app/flaskenv/bin/python",
                                             "Working Directory": "/opt/cqube/emission_app/python"
                                         }

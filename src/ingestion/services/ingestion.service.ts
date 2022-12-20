@@ -13,7 +13,7 @@ export class IngestionService {
             let response = await csv.toDisk(`./${fileName}.csv`, { append: true });
             return response;
         } catch (e) {
-            console.error('genericFunctions.writeToCSVFile: ', e.message);
+            console.error('writeToCSVFile: ', e.message);
             throw new Error(e);
         }
     }
@@ -24,8 +24,7 @@ export class IngestionService {
             return inputData;
         } else {
             return {
-                message: "Invalid Input"
-               
+                errors: ajv.errors
             };
         }
     }
