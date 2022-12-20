@@ -16,12 +16,13 @@ const databasePoolFactory = async (configService: ConfigService) => {
 
 @Module({
     providers: [
+        DatabaseService,
         {
             provide: 'DATABASE_POOL',
             inject: [ConfigService],
             useFactory: databasePoolFactory,
         },
-        DatabaseService,
+        
     ],
     exports: [DatabaseService],
 })

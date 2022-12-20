@@ -1,5 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { IngestionService } from './ingestion.service';
+import  { genericTestImpl } from '.././utils/testing'
 
 describe('IngestionService', () => {
   let service: IngestionService;

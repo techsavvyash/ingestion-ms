@@ -10,7 +10,7 @@ import { DatabaseModule } from './database/database.module';
 
   controllers: [AppController],
   providers: [AppService],
-  imports: [IngestionModule,
+  imports: [DatabaseModule,IngestionModule,
     ConfigModule.forRoot({ isGlobal: true }), 
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
@@ -25,7 +25,7 @@ import { DatabaseModule } from './database/database.module';
         synchronize: true,
       }),
       inject: [ConfigService],
-    }), DatabaseModule,
+    }),
   ],
 })
 export class AppModule {}
