@@ -4,6 +4,7 @@ import { IngestionService } from '../services/ingestion.service';
 import { IngestionDatasetQuery } from '../query/ingestionQuery';
 import { DatabaseService } from 'src/database/database.service';
 import { HttpService } from '@nestjs/axios';
+import { of } from 'rxjs';
 
 @Controller('ingestion')
 export class IngestionController {
@@ -17,11 +18,11 @@ export class IngestionController {
             const queryStr = await IngestionDatasetQuery.getDataset(datasetName);
             const queryResult = await this.DatabaseService.executeQuery(queryStr.query, queryStr.values);
             if (queryResult.length === 1) {
-                const isValidSchema:any = await this.service.ajvValidator(queryResult[0].dataset_data.input, inputData);
-                console.log(queryResult[0].dataset_data.input.properties.dataset.properties);
+                const isValidSchema:any = await this.service.ajvValidator(queryResult[0].dataset_data.input.properties.dataset.properties.items, inputData.dataset['items']);
+                console.log(queryResult[0].dataset_data.input.properties.dataset.properties.items, inputData.dataset['items']);
                 console.log("Input data",inputData);
                 if (!isValidSchema.errors) {
-                    await this.service.writeToCSVFile(datasetName, [inputData.dataset]);
+                    await this.service.writeToCSVFile(datasetName, [inputData.dataset['items']]);
                     return {
                         message: "Dataset Added Successfully"
                     }
@@ -58,7 +59,7 @@ export class IngestionController {
                 console.log(queryResult[0].dimension_data.input);
                 console.log("Input data",inputData);
                 if (!isValidSchema.errors) {
-                    await this.service.writeToCSVFile(dimensionName, [inputData.dimension]);
+                    await this.service.writeToCSVFile(dimensionName + '_dimension', [inputData.dimension]);
                     return {
                         message: "Dimension Added Successfully"
                     }
@@ -88,7 +89,7 @@ export class IngestionController {
                 const isValidSchema :any = await this.service.ajvValidator(queryResult[0].event_data.input, inputData);
                 console.log(queryResult[0].event_data.input);
                 if (!isValidSchema.errors) {
-                    await this.service.writeToCSVFile(eventName, [inputData.event]);
+                    await this.service.writeToCSVFile(eventName + '_event', [inputData.event]);
                     return {
                         message: "Event Added Successfully"
                     }
@@ -134,6 +135,8 @@ export class IngestionController {
                                 pg_source = pg
                             }
                         });
+
+                        console.log('here')
 
                         await this.addProcessor('org.apache.nifi.processors.standard.GenerateFlowFile', 'generateFlowFile', pg_source['component']['id'])
                         await this.addProcessor('org.apache.nifi.processors.standard.ExecuteStreamCommand', 'pythonCode', pg_source['component']['id'])
