@@ -1,5 +1,5 @@
 import { Dataset, Dimension, IEvent, Pipeline } from './../interfaces/Ingestion-data';
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Post, Res } from '@nestjs/common';
 import { IngestionService } from '../services/ingestion.service';
 import { IngestionDatasetQuery } from '../query/ingestionQuery';
 import { DatabaseService } from 'src/database/database.service';
@@ -124,9 +124,9 @@ export class IngestionController {
 
                 await this.addProcessorGroup(processor_group_name)
 
-                this.http.get(`${process.env.NIFI_IP}:${process.env.NIFI_PORT}/nifi-api/process-groups/root`, config).subscribe((res: any) => {
+                this.http.get(`${process.env.URL}/nifi-api/process-groups/root`, config).subscribe((res: any) => {
                     nifi_root_pg_id = res.data.component.id;
-                    this.http.get(`${process.env.NIFI_IP}:${process.env.NIFI_PORT}/nifi-api/flow/process-groups/${nifi_root_pg_id}`, config).subscribe(async (res: any) => {
+                    this.http.get(`${process.env.URL}/nifi-api/flow/process-groups/${nifi_root_pg_id}`, config).subscribe(async (res: any) => {
                         pg_list = res.data
 
                         pg_list['processGroupFlow']['flow']['processGroups'].forEach((pg: any) => {
@@ -166,7 +166,7 @@ export class IngestionController {
                             "disconnectedNodeAcknowledged": false
                         }
 
-                        this.http.put(`${process.env.NIFI_IP}:${process.env.NIFI_PORT}/nifi-api/flow/process-groups/${pg_source['component']['id']}`, data, config).subscribe((res: any) => {
+                        this.http.put(`${process.env.URL}/nifi-api/flow/process-groups/${pg_source['component']['id']}`, data, config).subscribe((res: any) => {
                             console.log(res.data)
                         })
                     })
@@ -187,7 +187,7 @@ export class IngestionController {
 
     addProcessorGroup(processor_group_name: string) {
         return new Promise<any>((resolve, reject) => {
-            this.http.get(`${process.env.NIFI_IP}:${process.env.NIFI_PORT}/nifi-api/process-groups/root`).subscribe((res: any) => {
+            this.http.get(`${process.env.URL}/nifi-api/process-groups/root`).subscribe((res: any) => {
                 const nifi_root_pg_id = res.data.component.id;
                 const minRange = -500;
                 const maxRange = 500;
@@ -208,7 +208,7 @@ export class IngestionController {
                     }
                 }
 
-                this.http.post<any>(`${process.env.NIFI_IP}:${process.env.NIFI_PORT}/nifi-api/process-groups/${nifi_root_pg_id}/process-groups`, pg_details).subscribe((res: any) => {
+                this.http.post<any>(`${process.env.URL}/nifi-api/process-groups/${nifi_root_pg_id}/process-groups`, pg_details).subscribe((res: any) => {
                     if (res) {
                         console.log("Successfully created the processor group", processor_group_name)
                         resolve('Successfully created the processor group')
@@ -224,7 +224,7 @@ export class IngestionController {
 
     addProcessor(processor_name, name, pg_source_id) {
         return new Promise<any>((resolve, reject) => {
-            this.http.get<any>(`${process.env.NIFI_IP}:${process.env.NIFI_PORT}/nifi-api/flow/process-groups/${pg_source_id}`).subscribe((res: any) => {
+            this.http.get<any>(`${process.env.URL}/nifi-api/flow/process-groups/${pg_source_id}`).subscribe((res: any) => {
                 const pg_ports = res.data
                 const minRange = -250;
                 const maxRange = 250;
@@ -250,7 +250,7 @@ export class IngestionController {
                         }
                     }
                 }
-                this.http.post<any>(`${process.env.NIFI_IP}:${process.env.NIFI_PORT}/nifi-api/process-groups/${pg_ports['processGroupFlow']['id']}/processors`, processors).subscribe((res: any) => {
+                this.http.post<any>(`${process.env.URL}/nifi-api/process-groups/${pg_ports['processGroupFlow']['id']}/processors`, processors).subscribe((res: any) => {
                     if (res) {
                         console.log("Successfully created the processor", processor_name)
                         resolve('Successfully created the processor')
@@ -279,7 +279,7 @@ export class IngestionController {
 
     getProcessorGroupPorts(pg_source_id): any {
         return new Promise<any>((resolve, reject) => {
-            this.http.get<any>(`${process.env.NIFI_IP}:${process.env.NIFI_PORT}/nifi-api/flow/process-groups/${pg_source_id}`).subscribe((res: any) => {
+            this.http.get<any>(`${process.env.URL}/nifi-api/flow/process-groups/${pg_source_id}`).subscribe((res: any) => {
                 resolve(res.data)
             })
         })
@@ -311,7 +311,7 @@ export class IngestionController {
                         "selectedRelationships": relationship
                     }
                 }
-                this.http.post<any>(`${process.env.NIFI_IP}:${process.env.NIFI_PORT}/nifi-api/process-groups/${pg_ports['processGroupFlow']['id']}/connections`, json_body).subscribe((res: any) => {
+                this.http.post<any>(`${process.env.URL}/nifi-api/process-groups/${pg_ports['processGroupFlow']['id']}/connections`, json_body).subscribe((res: any) => {
                     if (res) {
                         console.log(`Successfully connected the processor from ${sourceId} to ${destinationId}`)
                         resolve(`Successfully connected the processor from ${sourceId} to ${destinationId}`)
@@ -374,7 +374,7 @@ export class IngestionController {
                                 "disconnectedNodeAcknowledged": "False"
                             }
                         }
-                        this.http.put<any>(`${process.env.NIFI_IP}:${process.env.NIFI_PORT}/nifi-api/processors/${processor['component']['id']}`, update_processor_property_body).subscribe((res: any) => {
+                        this.http.put<any>(`${process.env.URL}/nifi-api/processors/${processor['component']['id']}`, update_processor_property_body).subscribe((res: any) => {
                             if (res) {
                                 console.log(`Successfully updated the properties in the ${processor_name}`)
                                 resolve(`Successfully updated the properties in the ${processor_name}`)
