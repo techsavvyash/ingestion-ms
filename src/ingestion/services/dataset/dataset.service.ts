@@ -32,7 +32,7 @@ export class DatasetService {
             }
             else {
                 return {
-                    code:404,
+                    code:400,
                     message: "No Dataset Found"
                 }
             }

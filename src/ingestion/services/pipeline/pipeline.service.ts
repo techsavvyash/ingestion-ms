@@ -78,7 +78,7 @@ export class PipelineService {
             }
             else {
                 return {
-                    code:404,
+                    code:400,
                     message: "No Pipeline Found"
                 }
             }

@@ -11,7 +11,6 @@ export class DatabaseService {
       this.logger.debug(`Executing query: ${queryText} (${values})`);
       return this.pool.query(queryText, values).then((result: QueryResult) => {
         this.logger.debug(`Executed query, result size ${result.rows.length}`);
-        console.log("meeags",result.rows);
         return result.rows;
 
       });

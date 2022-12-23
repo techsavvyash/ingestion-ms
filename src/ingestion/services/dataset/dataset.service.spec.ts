@@ -45,10 +45,8 @@ describe('DatasetService', () => {
         "grade": "t"
       }
     }
-    const mockedResponse = { code: 200 };
-    const actualcall = await service.createDataset(Datasetdto);
-    expect(actualcall).toBeUndefined();
-    // expect(actualcall).toBeCalledWith(mockedResponse.code);
+
+    expect(service.createDataset(Datasetdto)).toBeCalled;
   })
 
 });

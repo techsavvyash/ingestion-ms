@@ -30,7 +30,7 @@ export class DimensionService {
                 }
             } else {
                 return {
-                    code:404,
+                    code:400,
                     message: "No Dimension Found"
                 }
             }
