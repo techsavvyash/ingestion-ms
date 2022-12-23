@@ -16,8 +16,6 @@ export class DimensionService {
             const queryResult = await this.DatabaseService.executeQuery(queryStr.query, queryStr.values);
             if (queryResult?.length === 1) {
                 const isValidSchema :any = await this.service.ajvValidator(queryResult[0].dimension_data.input, inputData);
-                console.log(queryResult[0].dimension_data.input);
-                console.log("Input data",inputData);
                 if (!isValidSchema.errors) {
                     await this.service.writeToCSVFile(dimensionName + '_dimension', [inputData.dimension]);
                     return {
