@@ -2,12 +2,12 @@ import { Injectable } from '@nestjs/common';
 import { IngestionDatasetQuery } from '../../query/ingestionQuery';
 import { DatabaseService } from '../../../database/database.service';
 import { genricFunction } from '../gericFunction';
-
+import { Dataset } from '../../interfaces/Ingestion-data'
 @Injectable()
 export class DatasetService {
     constructor(private DatabaseService: DatabaseService , private service:genricFunction) { }
 
-    async createDataset(inputData) {
+    async createDataset(inputData:Dataset) {
         try {
             const datasetName = inputData.dataset_name;
             const queryStr = await IngestionDatasetQuery.getDataset(datasetName);

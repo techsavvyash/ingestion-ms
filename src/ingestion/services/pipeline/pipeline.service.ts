@@ -3,11 +3,13 @@ import { IngestionDatasetQuery } from '../../query/ingestionQuery';
 import { DatabaseService } from '../../../database/database.service';
 import { genricFunction } from '../gericFunction';
 import { HttpService } from '@nestjs/axios';
+import { Pipeline } from '../../interfaces/Ingestion-data'
+
 @Injectable()
 export class PipelineService {
     constructor(private DatabaseService: DatabaseService, private service: genricFunction, private http: HttpService,) { }
 
-    async pipeline(pipelineData) {
+    async pipeline(pipelineData:Pipeline) {
         try {
             const pipelineName = pipelineData.pipeline_name
             const queryStr = await IngestionDatasetQuery.getPipelineSpec(pipelineName);

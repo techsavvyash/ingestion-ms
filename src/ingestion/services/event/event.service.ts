@@ -3,11 +3,12 @@ import { Injectable } from '@nestjs/common';
 import { IngestionDatasetQuery } from '../../query/ingestionQuery';
 import { DatabaseService } from '../../../database/database.service';
 import { genricFunction } from '../gericFunction';
+import { IEvent } from '../../interfaces/Ingestion-data'
 @Injectable()
 export class EventService {
     constructor(private DatabaseService: DatabaseService , private service:genricFunction) { }
 
-    async createEvent(inputData) {
+    async createEvent(inputData:IEvent) {
         try {
             const eventName = inputData.event_name;
             const queryStr = await IngestionDatasetQuery.getEvents(eventName);
