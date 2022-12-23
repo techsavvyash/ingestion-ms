@@ -3,9 +3,9 @@ import Ajv from "ajv";
 const ajv = new Ajv();
 const ObjectsToCsv = require('objects-to-csv');
 @Injectable()
-export class IngestionService {
+export class genricFunction {
 
-    constructor() { }
+    constructor( ) { }
 
     async writeToCSVFile(fileName, inputArray) {
         try {
@@ -28,6 +28,4 @@ export class IngestionService {
             };
         }
     }
-
 }
-
