@@ -27,7 +27,7 @@ export class DatasetService {
                     
                     return {
                         code:404,
-                        isValidSchema
+                        error:isValidSchema.errors
                     }
 
                 }
