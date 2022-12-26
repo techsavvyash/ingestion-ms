@@ -4,9 +4,6 @@ const ajv = new Ajv();
 const ObjectsToCsv = require('objects-to-csv');
 @Injectable()
 export class genricFunction {
-
-    constructor( ) { }
-
     async writeToCSVFile(fileName, inputArray) {
         try {
             const csv = new ObjectsToCsv(inputArray);
@@ -17,7 +14,6 @@ export class genricFunction {
             throw new Error(e);
         }
     }
-
     async ajvValidator(schema, inputData) {
         const isValid = ajv.validate(schema, inputData);
         if (isValid) {

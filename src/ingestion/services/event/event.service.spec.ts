@@ -2,7 +2,6 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { genricFunction } from '../gericFunction';
 import { EventService } from './event.service';
 import { DatabaseService } from '../../../database/database.service';
-
 describe('EventService', () => {
   let service: EventService;
   const mockIngestionService = {
@@ -27,17 +26,12 @@ describe('EventService', () => {
           }
         }],
     }).compile();
-
     service = module.get<EventService>(EventService);
   });
-
   it('should be defined', () => {
     expect(service).toBeDefined();
   });
-
-
   it('should call an event api', () => {
-
     const eventData = {
       "event_name": "student_count",
       "event": {

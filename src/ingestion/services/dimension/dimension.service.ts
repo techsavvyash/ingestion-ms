@@ -3,14 +3,11 @@ import { IngestionDatasetQuery } from '../../query/ingestionQuery';
 import { DatabaseService } from '../../../database/database.service';
 import { genricFunction } from '../gericFunction';
 import { Dimension } from '../../interfaces/Ingestion-data'
-
 @Injectable()
 export class DimensionService {
     constructor(private DatabaseService: DatabaseService , private service:genricFunction) { }
-
     async createDimenshion(inputData:Dimension) {
         try {
-
             const dimensionName = inputData.dimension_name;
             const queryStr = await IngestionDatasetQuery.getDimesnsion(dimensionName);
             const queryResult = await this.DatabaseService.executeQuery(queryStr.query, queryStr.values);
@@ -35,7 +32,7 @@ export class DimensionService {
                 }
             }
         } catch (e) {
-            console.error('create-dimension-impl.executeQueryAndReturnResults: ', e.message);
+            console.error('create-dimension-impl.executeQueryAndReturnResults:', e.message);
             throw new Error(e);
         }
     }
