@@ -20,16 +20,23 @@ export class PipelineService {
                 const config = {
                     headers: { "Content-Type": "application/json" }
                 }
-                await this.addProcessorGroup(processor_group_name)
+                // await this.addProcessorGroup(processor_group_name)
                 this.http.get(`${process.env.URL}/nifi-api/process-groups/root`, config).subscribe((res: any) => {
                     nifi_root_pg_id = res.data.component.id;
                     this.http.get(`${process.env.URL}/nifi-api/flow/process-groups/${nifi_root_pg_id}`, config).subscribe(async (res: any) => {
                         pg_list = res.data
+                        let counter = 0;
                         pg_list['processGroupFlow']['flow']['processGroups'].forEach((pg: any) => {
                             if (pg['component']['name'] == processor_group_name) {
                                 pg_source = pg
+                                counter = counter + 1;
                             }
                         });
+                        if(counter == 0)
+                        { 
+                            await this.addProcessorGroup(processor_group_name); 
+                        }
+
                         await this.addProcessor('org.apache.nifi.processors.standard.GenerateFlowFile', 'generateFlowFile', pg_source['component']['id'])
                         await this.addProcessor('org.apache.nifi.processors.standard.ExecuteStreamCommand', 'pythonCode', pg_source['component']['id'])
                         await this.addProcessor('org.apache.nifi.processors.standard.LogMessage', 'successLogMessage', pg_source['component']['id'])
@@ -57,6 +64,7 @@ export class PipelineService {
                         this.http.put(`${process.env.URL}/nifi-api/flow/process-groups/${pg_source['component']['id']}`, data, config).subscribe((res: any) => {
 
                         })
+                    
                     })
                 })
             }
