@@ -3,7 +3,6 @@ import { PipelineService } from './pipeline.service';
 import { genricFunction } from '../gericFunction';
 import { DatabaseService } from '../../../database/database.service';
 import { HttpService } from '@nestjs/axios';
-
 describe('PipelineService', () => {
   let service: PipelineService;
   const mockIngestionService = {
@@ -13,7 +12,6 @@ describe('PipelineService', () => {
     getDataset: jest.fn(),
     executeQuery: jest.fn(dto =>{dto})
   }
-
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [DatabaseService,PipelineService,genricFunction,HttpService,
@@ -36,13 +34,11 @@ describe('PipelineService', () => {
           provide:PipelineService,
           useValue:mockIngestionService
         },
-       
       ],
     }).compile();
-
     service = module.get<PipelineService>(PipelineService);
   });
-
+  
   it('should be defined', () => {
     expect(service).toBeDefined();
   });
@@ -52,8 +48,6 @@ describe('PipelineService', () => {
       "pipeline_name": "student_count_pipe",
       "schedule_type": "dimension_to_db/ingest_to_aggregate/aggregate_to_dataset"
     }
-
     expect(service.pipeline(pipelinedata)).toBeCalled 
-
   })
 });

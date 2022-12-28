@@ -34,17 +34,11 @@ describe('IngestionController', () => {
           useValue: { pipeline:jest.fn(dto =>{dto})}
         }
       ],
-
     }).compile();
-
     controller = module.get<IngestionController>(IngestionController);
   });
-
+  
   it('should be defined', () => {
     expect(controller).toBeDefined();
   });
-
- 
 });
-
-

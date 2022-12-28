@@ -2,7 +2,6 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { DimensionService } from './dimension.service';
 import { genricFunction } from '../gericFunction';
 import { DatabaseService } from '../../../database/database.service';
-
 describe('DimensionService', () => {
   let service: DimensionService;
   const mockIngestionService = {
@@ -12,7 +11,6 @@ describe('DimensionService', () => {
     getDataset: jest.fn(),
     executeQuery: jest.fn(dto =>{dto})
   }
-
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [DatabaseService,DimensionService,genricFunction,
@@ -28,15 +26,13 @@ describe('DimensionService', () => {
           }
         }],
     }).compile();
-
     service = module.get<DimensionService>(DimensionService);
   });
 
   it('should be defined', () => {
     expect(service).toBeDefined();
   });
-
-
+  
   it('should call an dimension api', () => {
     const dimesionData = {
       "dimension_name": "district",

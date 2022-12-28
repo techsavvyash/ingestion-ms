@@ -4,7 +4,6 @@ import { genricFunction } from '../gericFunction';
 import { DatabaseService } from '../../../database/database.service';
 describe('DatasetService', () => {
   let service: DatasetService;
-
   const mockDatabaseService = {
     executeQuery: jest.fn(dto =>{})
   }
@@ -28,14 +27,12 @@ describe('DatasetService', () => {
         }
       ],
     }).compile();
-
     service = module.get<DatasetService>(DatasetService);
   });
-
+  
   it('should be defined', () => {
     expect(service).toBeDefined();
   });
-
 
   it('should call an dataset api', async () => {
     const Datasetdto = {
@@ -45,8 +42,6 @@ describe('DatasetService', () => {
         "grade": "t"
       }
     }
-
     expect(service.createDataset(Datasetdto)).toBeCalled;
   })
-
 });
