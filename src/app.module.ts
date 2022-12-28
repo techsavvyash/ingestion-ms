@@ -23,7 +23,7 @@ import {DatabaseModule} from './database/database.module';
                 password: configService.get('DB_PASSWORD'),
                 database: configService.get('DB_NAME'),
                 entities: [],
-                synchronize: true,
+                synchronize: false,
             }),
             inject: [ConfigService],
         }),
