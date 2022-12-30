@@ -14,7 +14,7 @@ export class DatasetService {
             if (queryResult?.length === 1) {
                 const isValidSchema:any = await this.service.ajvValidator(queryResult[0].dataset_data.input, inputData);
                 if (!isValidSchema.errors) {
-                    await this.service.writeToCSVFile(datasetName, [inputData.dataset]);
+                    await this.service.writeToCSVFile(datasetName, [inputData.dataset["items"]]);
                     return {
                         code:200,
                         message: "Dataset Added Successfully"
