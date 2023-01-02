@@ -18,7 +18,7 @@ export class IngestionController {
         try {
             let result = await this.datasetservice.createDataset(inputData);
             if (result.code == 400) {
-                response.status(400).send({"message": result.message});
+                response.status(400).send({"message": result.error});
             } else {
                 response.status(200).send({"message": result.message});
             }
@@ -34,7 +34,7 @@ export class IngestionController {
         try {
             let result = await this.dimesionService.createDimenshion(inputData);
             if (result.code == 400) {
-                response.status(400).send({"message": result.message});
+                response.status(400).send({"message": result.error});
             } else {
                 response.status(200).send({"message": result.message});
             }
@@ -47,9 +47,9 @@ export class IngestionController {
     @Post('/event')
     async createEvent(@Body() inputData: IEvent, @Res()response: Response) {
         try {
-            let result = await this.eventService.createEvent(inputData)
+            let result = await this.eventService.createEvent(inputData);
             if (result.code == 400) {
-                response.status(400).send({"message": result.message});
+                response.status(400).send({"message": result.error});
             } else {
                 response.status(200).send({"message": result.message});
             }
