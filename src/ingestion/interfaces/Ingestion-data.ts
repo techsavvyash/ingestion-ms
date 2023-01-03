@@ -1,10 +1,10 @@
 export interface Dimension{
     dimension_name: string,
-    dimension:Array<object>[]
+    dimension:object[];
 }
 export interface IEvent{
     event_name: string,
-    event:Array<object>[]
+    event:object[];
 }
 export interface Dataset{
     dataset_name: string,
