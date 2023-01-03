@@ -274,7 +274,7 @@ export class PipelineService {
                     "source": {
                         "id": sourceId,
                         "groupId": pg_id,
-                        "type": "ProcPROCESSOR"
+                        "type": "PROCESSOR"
                     },
                     "destination": {
                         "id": destinationId,
@@ -286,7 +286,7 @@ export class PipelineService {
             }
             let url = `${process.env.URL}/nifi-api/process-groups/${pg_ports['processGroupFlow']['id']}/connections`
             try {
-                let result = await this.http.post(url, json_body)
+                let result = await this.http.post(url, json_body);
                 if (result) {
                     console.log(`Successfully connected the processor from ${sourceId} to ${destinationId}`)
                     return `{message:Successfully connected the processor from ${sourceId} to ${destinationId}}`;
