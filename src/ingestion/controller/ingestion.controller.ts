@@ -1,5 +1,5 @@
 import {Dataset, Dimension, IEvent, Pipeline} from './../interfaces/Ingestion-data';
-import {Body, Controller, HttpCode, Post, Res} from '@nestjs/common';
+import {Body, Controller, Post, Res} from '@nestjs/common';
 import {DatasetService} from '../services/dataset/dataset.service';
 import {DimensionService} from '../services/dimension/dimension.service';
 import {EventService} from '../services/event/event.service';
@@ -32,7 +32,7 @@ export class IngestionController {
     @Post('/dimension')
     async createDimenshion(@Body() inputData: Dimension, @Res()response: Response) {
         try {
-            let result = await this.dimesionService.createDimenshion(inputData);
+            let result = await this.dimesionService.createDimension(inputData);
             if (result.code == 400) {
                 response.status(400).send({"message": result.error});
             } else {
@@ -65,7 +65,7 @@ export class IngestionController {
             let result = await this.pipelineService.pipeline(pipelineData);
             console.log('ingestion.controller.pipeline: ', result);
             if (result.code == 400) {
-                response.status(400).send({"message": result.message});
+                response.status(400).send({"message": result.error});
             } else {
                 response.status(200).send({"message": result.message});
             }
