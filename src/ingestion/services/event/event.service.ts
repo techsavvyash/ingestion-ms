@@ -38,7 +38,7 @@ export class EventService {
             } else {
                 return {
                     code: 400,
-                    error: "Event Name not sent"
+                    error: "Event Name is missing"
                 }
             }
         } catch (e) {

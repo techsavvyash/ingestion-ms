@@ -38,7 +38,7 @@ export class DimensionService {
             } else {
                 return {
                     code: 400,
-                    error: "Dimension Name not sent"
+                    error: "Dimension Name is missing"
                 }
             }
         } catch (e) {
