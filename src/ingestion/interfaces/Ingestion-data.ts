@@ -14,3 +14,8 @@ export interface Pipeline{
     pipeline_name: string,
     schedule_type: string
 }
+export interface Result{
+    code: number,
+    message?: string,
+    error?:string
+}

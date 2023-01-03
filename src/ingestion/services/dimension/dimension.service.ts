@@ -9,10 +9,10 @@ export class DimensionService {
     constructor(private DatabaseService: DatabaseService, private service: genricFunction) {
     }
 
-    async createDimenshion(inputData: Dimension) {
+    async createDimension(inputData: Dimension) {
         try {
             const dimensionName = inputData.dimension_name;
-            const queryStr = await IngestionDatasetQuery.getDimesnsion(dimensionName);
+            const queryStr = await IngestionDatasetQuery.getDimension(dimensionName);
             const queryResult = await this.DatabaseService.executeQuery(queryStr.query, queryStr.values);
             if (queryResult?.length === 1) {
                 const isValidSchema: any = await this.service.ajvValidator(queryResult[0].dimension_data.input, inputData);

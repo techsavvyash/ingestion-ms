@@ -3,7 +3,7 @@ export const IngestionDatasetQuery = {
         const queryStr = `SELECT dataset_data FROM spec.dataset WHERE dataset_name = $1`;
         return {query: queryStr, values: [datasetName]};
     },
-    async getDimesnsion(dimensionName) {
+    async getDimension(dimensionName) {
         const queryStr = `SELECT dimension_data FROM spec.dimension WHERE dimension_name = $1`;
         return {query: queryStr, values: [dimensionName]};
     },
