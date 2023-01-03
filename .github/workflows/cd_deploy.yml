@@ -3,7 +3,7 @@ on:
   pull_request_target:
     types:
       - closed
-    branches: [main]
+    branches: [dev]
 
 jobs:
   if_merged:
@@ -17,18 +17,21 @@ jobs:
         username: ${{secrets.DOCKER_USER}}
         password: ${{secrets.DOCKER_PASSWORD}}
 
+    - name: adding aws credentials
+      run: sed -i 's|"access_key_id"|"${{secrets.ACCESS_KEY}}"|g;s|"secret_key_id"|"${{secrets.SECRET_KEY}}"|g' index.js
+      shell: bash
+
     - name: Build and push
       uses: docker/build-push-action@v3
       with:
         context: .
         push: true
-        tags: tibildocker/ingest-ms:latest
+        tags: tibildocker/ingestion_ms:1
 
     - name: Docker pull image and deploy from hub
       env:
         DOCKER_USER: ${{secrets.DOCKER_USER}}
         DOCKER_PASSWORD: ${{secrets.DOCKER_PASSWORD}}
-        REPO: ingest-ms
       uses: appleboy/ssh-action@master
       with:
         HOST: ${{ secrets.HOST }}
@@ -37,8 +40,8 @@ jobs:
         PORT: '22'
         script: |
           docker login
-          docker pull tibildocker/ingest-ms
-          docker stop ingest_app || true
-          docker rm ingest_app || true
-          docker rmi ingest-ms:latest || true
-          docker run -d --name ingest_app -p 3000:3000 tibildocker/ingest-ms
+          docker pull tibildocker/ingestion_ms
+          docker stop cqube_v5_ingest_app_1 || true
+          docker rm cqube_v5_ingest_app_1 || true
+          docker rmi tibildocker/ingestion_ms:1 || true
+          docker run -d --name cqube_v5_ingest_app_1 -p 3000:3000 --network cqube_v5_cqube_net tibildocker/ingestion_ms:1
