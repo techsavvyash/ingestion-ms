@@ -34,11 +34,11 @@ describe('EventService', () => {
   it('should call an event api', () => {
     const eventData = {
       "event_name": "student_count",
-      "event": {
+      "event": [{
         "school_id": "201",
         "grade": "1",
         "count": "10"
-      }
+      }]
     }
     expect(service.createEvent(eventData)).toBeCalled
   })
