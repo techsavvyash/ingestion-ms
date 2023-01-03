@@ -43,5 +43,5 @@ jobs:
           docker pull tibildocker/ingestion_ms
           docker stop cqube_v5_ingest_app_1 || true
           docker rm cqube_v5_ingest_app_1 || true
-          docker rmi ingestion_ms:1 || true
-          docker run -d --name cqube_v5_ingest_app_1 -p 3000:3000 --network cqube_v5_cqube_net tibildocker/ingestion_ms
+          docker rmi tibildocker/ingestion_ms:1 || true
+          docker run -d --name cqube_v5_ingest_app_1 -p 3000:3000 --network cqube_v5_cqube_net tibildocker/ingestion_ms:1
