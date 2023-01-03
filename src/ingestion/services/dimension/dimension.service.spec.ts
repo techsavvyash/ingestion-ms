@@ -34,13 +34,13 @@ describe('DimensionService', () => {
   });
   
   it('should call an dimension api', () => {
-    const dimesionData = {
+    const dimensionData = {
       "dimension_name": "district",
-      "dimension": {
+      "dimension": [{
         "name": "jhaha",
         "district_id": "SH123"
-      }
+      }]
     }
-    expect(service.createDimenshion(dimesionData)).toBeCalled
+    expect(service.createDimension(dimensionData)).toBeCalled
   })
 });
