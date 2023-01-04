@@ -94,10 +94,10 @@ export class PipelineService {
                         await this.connect(generateFlowFileID, pythonCodeID, success_relationship, pg_source['component']['id']);
                         await this.connect(pythonCodeID, successLogMessageID, python_success_relationship, pg_source['component']['id']);
                         await this.connect(pythonCodeID, failedLogMessageID, python_failure_relationship, pg_source['component']['id']);
-                        await this.connect(successLogMessageID, successLogMessageID, autoterminate_relationship, pg_source['component']['id']);
-                        await this.connect(failedLogMessageID, failedLogMessageID, autoterminate_relationship, pg_source['component']['id']);
                         await this.updateProcessorProperty(pg_source['component']['id'], 'pythonCode', transformer_file);
                         await this.updateProcessorProperty(pg_source['component']['id'], 'generateFlowFile', transformer_file);
+                        await this.updateProcessorProperty(pg_source['component']['id'], 'successLogMessage', transformer_file);
+                        await this.updateProcessorProperty(pg_source['component']['id'], 'failedLogMessage', transformer_file);
                         data = {
                             "id": pg_source['component']['id'],
                             "state": "RUNNING",  // RUNNING or STOP
@@ -330,7 +330,53 @@ export class PipelineService {
                             "disconnectedNodeAcknowledged": "False"
                         }
                     }
-                    else {
+                    if (processor_name == 'failedLogMessage'){
+                        update_processor_property_body = {
+                            "component": {
+                                "id": processor.component.id,
+                                "name": processor.component.name,
+                                "config": {
+                                    "autoTerminatedRelationships": [
+                                        "success"
+                                    ],
+                                    "properties": {
+                                        "log-prefix": "error",
+                                        "log-message": "error while executing the ${filename} python code"
+                                    }
+                                }
+                            },
+                            "revision": {
+                                "clientId": "",
+                                "version": processor.revision.version
+                            },
+                            "disconnectedNodeAcknowledged": "false"
+                        
+                        }
+
+                    }
+                    if (processor_name == 'successLogMessage'){
+                        update_processor_property_body = {
+                            "component": {
+                                "id": processor.component.id,
+                                "name": processor.component.name,
+                                "config": {
+                                    "autoTerminatedRelationships": [
+                                        "success"
+                                    ],
+                                    "properties": {
+                                        "log-prefix": "info",
+                                        "log-message": "succesfully executed the ${filename} python code"
+                                    }
+                                }
+                            },
+                            "revision": {
+                                "clientId": "",
+                                "version": processor.revision.version
+                            },
+                            "disconnectedNodeAcknowledged": "false"
+                        }
+                    }
+                    if (processor_name == 'pythonCode') {
                         update_processor_property_body = {
                             "component": {
                                 "id": processor.component.id,
