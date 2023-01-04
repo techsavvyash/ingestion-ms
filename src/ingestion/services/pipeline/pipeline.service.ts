@@ -1,10 +1,10 @@
-import { Result } from './../../interfaces/Ingestion-data';
-import { HttpCustomService } from './../HttpCustomService';
-import { Injectable } from '@nestjs/common';
-import { IngestionDatasetQuery } from '../../query/ingestionQuery';
-import { DatabaseService } from '../../../database/database.service';
-import { genricFunction } from '../gericFunction';
-import { Pipeline } from '../../interfaces/Ingestion-data'
+import {Result} from './../../interfaces/Ingestion-data';
+import {HttpCustomService} from './../HttpCustomService';
+import {Injectable} from '@nestjs/common';
+import {IngestionDatasetQuery} from '../../query/ingestionQuery';
+import {DatabaseService} from '../../../database/database.service';
+import {genricFunction} from '../gericFunction';
+import {Pipeline} from '../../interfaces/Ingestion-data'
 
 @Injectable()
 export class PipelineService {
@@ -20,20 +20,20 @@ export class PipelineService {
                         "pipeline_name": {
                             "type": "string"
                         },
-            
+
                     },
                     "required": [
                         "pipeline_name"
                     ]
-        }
-    }
+                }
+            }
             const pipelineName = pipelineData.pipeline_name;
             if (pipelineName == "") {
-                return { code: 400, error: "Pipeline Name cannot be empty" }
+                return {code: 400, error: "Pipeline Name cannot be empty"}
             }
-            const isValidSchema: any = await this.service.ajvValidator(pipeSchema.input,pipelineData);
+            const isValidSchema: any = await this.service.ajvValidator(pipeSchema.input, pipelineData);
             if (isValidSchema.errors) {
-                return { code: 400, error: isValidSchema.errors }
+                return {code: 400, error: isValidSchema.errors}
             }
             else {
                 const queryStr = await IngestionDatasetQuery.getPipelineSpec(pipelineName);
@@ -44,31 +44,25 @@ export class PipelineService {
                     const processor_group_name = pipelineData.pipeline_name;
                     let data = {};
                     const config = {
-                        headers: { "Content-Type": "application/json" }
+                        headers: {"Content-Type": "application/json"}
                     };
 
                     let res = await this.http.get(`${process.env.URL}/nifi-api/process-groups/root`);
                     nifi_root_pg_id = res.data['component']['id'];
                     let resp = await this.http.get(`${process.env.URL}/nifi-api/flow/process-groups/${nifi_root_pg_id}`)
-                    console.log("Process group is:", resp.data);
                     pg_list = resp.data;
                     let counter = 0;
                     let pg_group = pg_list['processGroupFlow']['flow']['processGroups']
                     for (let pg of pg_group) {
-                        console.log("process groups are:", pg.component.name);
                         if (pg.component.name == processor_group_name) {
                             pg_source = pg;
                             counter = counter + 1;
-                            console.log("coming inside of if statement")
-                            console.log(pg_source.component.id);
-                            console.log("Another form", pg_source['component']['id'])
                             data = {
                                 "id": pg_source['component']['id'],
                                 "state": "STOPPED",  // RUNNING or STOP
                                 "disconnectedNodeAcknowledged": false
                             };
-                            console.log('pipeline.service.: STOPPED');
-                            await this.http.put(`${process.env.URL}/nifi-api/flow/process-groups/${pg_source['component']['id']}`, data,)
+                            await this.http.put(`${process.env.URL}/nifi-api/flow/process-groups/${pg_source['component']['id']}`, data,);
                             break;
                         }
                     }
@@ -80,13 +74,9 @@ export class PipelineService {
                         await this.addProcessor('org.apache.nifi.processors.standard.LogMessage', 'successLogMessage', pg_source['component']['id']);
                         await this.addProcessor('org.apache.nifi.processors.standard.LogMessage', 'failedLogMessage', pg_source['component']['id']);
                         const generateFlowFileID = await this.getProcessorSourceId(pg_source['component']['id'], 'generateFlowFile');
-                        console.log("generate Flow File ID is", generateFlowFileID);
                         const pythonCodeID = await this.getProcessorSourceId(pg_source['component']['id'], 'pythonCode');
-                        console.log("Python Code Id is:", pythonCodeID);
                         const successLogMessageID = await this.getProcessorSourceId(pg_source['component']['id'], 'successLogMessage');
-                        console.log("Success Log Message ID is:", successLogMessageID);
                         const failedLogMessageID = await this.getProcessorSourceId(pg_source['component']['id'], 'failedLogMessage');
-                        console.log("Failed Log Message ID is:", failedLogMessageID);
                         const success_relationship = ["success"];
                         const python_failure_relationship = ["nonzero status"];
                         const python_success_relationship = ["output stream"];
@@ -118,7 +108,6 @@ export class PipelineService {
                             "state": "RUNNING",  // RUNNING or STOP
                             "disconnectedNodeAcknowledged": false
                         };
-                        console.log('pipeline.service.: RUNNING');
                         await this.http.put(`${process.env.URL}/nifi-api/flow/process-groups/${pg_source['component']['id']}`, data);
                         return {
                             code: 200,
@@ -165,8 +154,8 @@ export class PipelineService {
                         "y": y
                     }
                 }
-            }
-            try{
+            };
+            try {
                 let processurl = `${process.env.URL}/nifi-api/process-groups/${nifi_root_pg_id}/process-groups`;
                 let processRes = await this.http.post(processurl, pg_details);
                 if (processRes) {
@@ -175,11 +164,10 @@ export class PipelineService {
                 else {
                     return 'Failed to create the processor group';
                 }
-            }catch(error)
-            {
-                return {code:400, error:"Error occured during processor group creation"}
+            } catch (error) {
+                return {code: 400, error: "Error occured during processor group creation"}
             }
-            
+
         }
 
     }
@@ -187,11 +175,11 @@ export class PipelineService {
     async addProcessor(processor_name, name, pg_source_id) {
         let url = `${process.env.URL}/nifi-api/flow/process-groups/${pg_source_id}`;
         let result = await this.http.get(url);
-        const pg_ports = result.data
+        const pg_ports = result.data;
         const minRange = -250;
         const maxRange = 250;
-        const x = Math.floor(Math.random() * (maxRange - minRange) + minRange)
-        const y = Math.floor(Math.random() * (maxRange - minRange) + minRange)
+        const x = Math.floor(Math.random() * (maxRange - minRange) + minRange);
+        const y = Math.floor(Math.random() * (maxRange - minRange) + minRange);
         const processors = {
             "revision": {
                 "clientId": "",
@@ -211,8 +199,8 @@ export class PipelineService {
                     "y": y
                 }
             }
-        }
-        try{
+        };
+        try {
             let addProcessUrl = `${process.env.URL}/nifi-api/process-groups/${pg_ports['processGroupFlow']['id']}/processors`;
             let addProcessResult = await this.http.post(addProcessUrl, processors);
             if (addProcessResult) {
@@ -221,11 +209,10 @@ export class PipelineService {
             else {
                 return "Failed to create the processor";
             }
-        }catch(error)
-        {
-            return {code:400, error:"Error occured during processor creation"}
+        } catch (error) {
+            return {code: 400, error: "Error occured during processor creation"}
         }
-       
+
 
     }
 
@@ -245,17 +232,16 @@ export class PipelineService {
     }
 
     async getProcessorGroupPorts(pg_source_id) {
-        let url = `${process.env.URL}/nifi-api/flow/process-groups/${pg_source_id}`
-        try{
+        let url = `${process.env.URL}/nifi-api/flow/process-groups/${pg_source_id}`;
+        try {
             let res = await this.http.get(url);
             if (res.data) {
                 return res.data;
             }
-        }catch(error){
-            return {code:400, error:"coould not get Processor Group Port"}
+        } catch (error) {
+            return {code: 400, error: "could not get Processor Group Port"}
         }
-        
-       
+
 
     }
 
@@ -287,6 +273,7 @@ export class PipelineService {
             let url = `${process.env.URL}/nifi-api/process-groups/${pg_ports['processGroupFlow']['id']}/connections`
             try {
                 let result = await this.http.post(url, json_body);
+                console.log('pipeline.service.result: ', result);
                 if (result) {
                     console.log(`Successfully connected the processor from ${sourceId} to ${destinationId}`)
                     return `{message:Successfully connected the processor from ${sourceId} to ${destinationId}}`;
@@ -294,13 +281,11 @@ export class PipelineService {
                 else {
                     console.log(`Failed to connect the processor`)
                     return `{message:Failed connected the processor from ${sourceId} to ${destinationId}}`;
-                } 
-            }catch(error)
-            {
-                return { code:400, message:"Errror occured during connection"};
+                }
+            } catch (error) {
+                return {code: 400, message: "Errror occured during connection"};
             }
-             
-            
+
 
         }
     }
@@ -330,7 +315,7 @@ export class PipelineService {
                             "disconnectedNodeAcknowledged": "False"
                         }
                     }
-                    if (processor_name == 'failedLogMessage'){
+                    if (processor_name == 'failedLogMessage') {
                         update_processor_property_body = {
                             "component": {
                                 "id": processor.component.id,
@@ -350,11 +335,11 @@ export class PipelineService {
                                 "version": processor.revision.version
                             },
                             "disconnectedNodeAcknowledged": "false"
-                        
+
                         }
 
                     }
-                    if (processor_name == 'successLogMessage'){
+                    if (processor_name == 'successLogMessage') {
                         update_processor_property_body = {
                             "component": {
                                 "id": processor.component.id,
@@ -400,8 +385,7 @@ export class PipelineService {
                         }
                     }
                     let url = `${process.env.URL}/nifi-api/processors/${processor?.component?.id}`;
-                    try
-                    {
+                    try {
                         let result = await this.http.put(url, update_processor_property_body);
                         if (result) {
                             return `{message:Successfully updated the properties in the ${processor_name}}`;
@@ -411,13 +395,14 @@ export class PipelineService {
                             return `{message:Failed to update the properties in the ${processor_name}}`;
                         }
 
-                    } catch(error){
-                        return {code:400,error:"Could not update the processor"};
+                    } catch (error) {
+                        return {code: 400, error: "Could not update the processor"};
                     }
-                    
-                    
+
+
                 }
-            };
+            }
+            ;
         }
     }
 
