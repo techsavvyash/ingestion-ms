@@ -3,7 +3,7 @@ on:
   pull_request_target:
     types:
       - closed
-    branches: [staging]
+    branches: [dev]
 
 jobs:
   if_merged:
