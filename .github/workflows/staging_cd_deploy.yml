@@ -24,7 +24,7 @@ jobs:
     - name: Build and push
       uses: docker/build-push-action@v3
       with:
-        context: staging.Dockerfile
+        context: ../staging.Dockerfile
         push: true
         tags: tibildocker/ingestion_ms:2
 
