@@ -3,7 +3,7 @@ on:
   pull_request_target:
     types:
       - closed
-    branches: [staging]
+    branches: [dev]
 
 jobs:
   if_merged:
@@ -18,13 +18,13 @@ jobs:
         password: ${{secrets.DOCKER_PASSWORD}}
 
     - name: adding aws credentials
-      run: sed -i 's|"access_key_id"|"${{secrets.ACCESS_KEY}}"|g;s|"secret_key_id"|"${{secrets.SECRET_KEY}}"|g' index.js
+      run: sed -i 's|"access_key_id"|"${{secrets.ACCESS_KEY}}"|g;s|"secret_key_id"|"${{secrets.SECRET_KEY}}"|g' dev_index.js
       shell: bash
 
     - name: Build and push
       uses: docker/build-push-action@v3
       with:
-        context: .
+        context: dev.Dockerfile
         push: true
         tags: tibildocker/ingestion_ms:1
 
@@ -34,7 +34,7 @@ jobs:
         DOCKER_PASSWORD: ${{secrets.DOCKER_PASSWORD}}
       uses: appleboy/ssh-action@master
       with:
-        HOST: ${{ secrets.QA_HOST }}
+        HOST: ${{ secrets.HOST }}
         USERNAME: ${{ secrets.USERNAME }}
         KEY: ${{ secrets.KEY }}
         PORT: '22'
