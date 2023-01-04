@@ -3,7 +3,7 @@ on:
   pull_request_target:
     types:
       - closed
-    branches: [dev]
+    branches: [staging]
 
 jobs:
   if_merged:
@@ -34,7 +34,7 @@ jobs:
         DOCKER_PASSWORD: ${{secrets.DOCKER_PASSWORD}}
       uses: appleboy/ssh-action@master
       with:
-        HOST: ${{ secrets.HOST }}
+        HOST: ${{ secrets.QA_HOST }}
         USERNAME: ${{ secrets.USERNAME }}
         KEY: ${{ secrets.KEY }}
         PORT: '22'
