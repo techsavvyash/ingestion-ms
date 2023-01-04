@@ -5,5 +5,5 @@ COPY . .
 RUN npm install && npm i aws-sdk
 RUN npm run build
  
-CMD ["node","staging_index"]
+CMD ["node","index"]
 
