@@ -17,7 +17,7 @@ jobs:
         username: ${{secrets.DOCKER_USER}}
         password: ${{secrets.DOCKER_PASSWORD}}
 
-    - name: adding aws credentials
+    - name: adding credentials
       run: sed -i 's|"access_key_id"|"${{secrets.ACCESS_KEY}}"|g;s|"secret_key_id"|"${{secrets.SECRET_KEY}}"|g' index.js
       shell: bash
 
