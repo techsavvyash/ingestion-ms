@@ -10,7 +10,7 @@ describe('PipelineService', () => {
     let service: PipelineService;
 
     const mockHttpservice = {
-        post: jest.fn().mockReturnValueOnce({data: {component: {id: 2}}}).mockReturnValueOnce("RESPONSE").mockReturnValueOnce("RESULT"),
+        post: jest.fn().mockReturnValueOnce({data: {component: {id: 2}}}).mockReturnValue('response'),
         put: jest.fn(),
         get: jest.fn().mockReturnValueOnce({data: {component: {id: 1}}}).mockReturnValueOnce({
             data: {
@@ -119,10 +119,40 @@ describe('PipelineService', () => {
                         }
                     }
                 }
-            }).mockReturnValueOnce({
+            }).mockReturnValue({
                 data: {
                     processGroupFlow: {
-                        id: 1
+                        id: 1,
+                        flow: {
+                            processors: [{
+                                component: {
+                                    name: "generateFlowFile",
+                                    id: 1
+                                },
+                                revision: {
+                                    version: 1.1
+                                }
+                            }, {
+                                component: {name: "pythonCode", id: 2},
+                                revision: {
+                                    version: 1.1
+                                }
+                            },
+                                {
+                                    component: {name: "successLogMessage", id: 3},
+                                    revision: {
+                                        version: 1.1
+                                    }
+                                }, {
+                                    component: {
+                                        name: "failedLogMessage",
+                                        id: 4
+                                    },
+                                    revision: {
+                                        version: 1.1
+                                    }
+                                }]
+                        }
                     }
                 }
             })
@@ -202,13 +232,13 @@ describe('PipelineService', () => {
         expect(await service.pipeline(pipelineData)).toStrictEqual(resultOutput);
     }, 70000);
 
-    // it("Processor Group Doesn't Exists", async () => {
-    //     const pipelineData = {
-    //         "pipeline_name": "asd"
-    //     };
-    //     let resultOutput =
-    //         {code: 200, message: "Processor Group Running Successfully"};
-    //
-    //     expect(await service.pipeline(pipelineData)).toStrictEqual(resultOutput);
-    // }, 70000);
+    it("Processor Group Doesn't Exists", async () => {
+        const pipelineData = {
+            "pipeline_name": "asd"
+        };
+        let resultOutput =
+            {code: 200, message: "Processor Group Running Successfully"};
+
+        expect(await service.pipeline(pipelineData)).toStrictEqual(resultOutput);
+    }, 70000);
 });

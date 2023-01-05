@@ -26,7 +26,7 @@ export class PipelineService {
                         "pipeline_name"
                     ]
                 }
-            }
+            };
             const pipelineName = pipelineData.pipeline_name;
             if (pipelineName == "") {
                 return {code: 400, error: "Pipeline Name cannot be empty"}
@@ -49,10 +49,10 @@ export class PipelineService {
 
                     let res = await this.http.get(`${process.env.URL}/nifi-api/process-groups/root`);
                     nifi_root_pg_id = res.data['component']['id'];
-                    let resp = await this.http.get(`${process.env.URL}/nifi-api/flow/process-groups/${nifi_root_pg_id}`)
+                    let resp = await this.http.get(`${process.env.URL}/nifi-api/flow/process-groups/${nifi_root_pg_id}`);
                     pg_list = resp.data;
                     let counter = 0;
-                    let pg_group = pg_list['processGroupFlow']['flow']['processGroups']
+                    let pg_group = pg_list['processGroupFlow']['flow']['processGroups'];
                     for (let pg of pg_group) {
                         if (pg.component.name == processor_group_name) {
                             pg_source = pg;
@@ -93,7 +93,6 @@ export class PipelineService {
                             "state": "RUNNING",  // RUNNING or STOP
                             "disconnectedNodeAcknowledged": false
                         };
-                        console.log('pipeline.service.: RUNNING');
                         await this.http.put(`${process.env.URL}/nifi-api/flow/process-groups/${pg_source['component']['id']}`, data)
                         return {
                             code: 200,
@@ -246,9 +245,9 @@ export class PipelineService {
     }
 
     async connect(sourceId, destinationId, relationship, pg_source_id) {
-        const pg_ports = await this.getProcessorGroupPorts(pg_source_id)
+        const pg_ports = await this.getProcessorGroupPorts(pg_source_id);
         if (pg_ports) {
-            const pg_id = pg_ports['processGroupFlow']['id']
+            const pg_id = pg_ports['processGroupFlow']['id'];
             const json_body = {
                 "revision": {
                     "clientId": "",
@@ -269,17 +268,14 @@ export class PipelineService {
                     },
                     "selectedRelationships": relationship
                 }
-            }
-            let url = `${process.env.URL}/nifi-api/process-groups/${pg_ports['processGroupFlow']['id']}/connections`
+            };
+            let url = `${process.env.URL}/nifi-api/process-groups/${pg_ports['processGroupFlow']['id']}/connections`;
             try {
                 let result = await this.http.post(url, json_body);
-                console.log('pipeline.service.result: ', result);
                 if (result) {
-                    console.log(`Successfully connected the processor from ${sourceId} to ${destinationId}`)
                     return `{message:Successfully connected the processor from ${sourceId} to ${destinationId}}`;
                 }
                 else {
-                    console.log(`Failed to connect the processor`)
                     return `{message:Failed connected the processor from ${sourceId} to ${destinationId}}`;
                 }
             } catch (error) {
@@ -295,7 +291,7 @@ export class PipelineService {
         if (pg_ports) {
             for (let processor of pg_ports['processGroupFlow']['flow']['processors']) {
                 if (processor.component.name == processor_name) {
-                    let update_processor_property_body
+                    let update_processor_property_body;
                     if (processor_name == 'generateFlowFile') {
                         update_processor_property_body = {
                             "component": {
@@ -402,7 +398,6 @@ export class PipelineService {
 
                 }
             }
-            ;
         }
     }
 
