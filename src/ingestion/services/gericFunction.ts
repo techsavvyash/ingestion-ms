@@ -1,9 +1,10 @@
 import {Injectable} from '@nestjs/common';
 import Ajv from "ajv";
 import Ajv2019 from "ajv/dist/2019"
-
-
+import addFormats from "ajv-formats"
 const ajv = new Ajv2019();
+addFormats(ajv);
+
 const ObjectsToCsv = require('objects-to-csv');
 ajv.addKeyword({
     keyword: 'shouldNotNull',
