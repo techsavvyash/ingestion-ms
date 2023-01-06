@@ -1,8 +1,22 @@
 import {Injectable} from '@nestjs/common';
 import Ajv from "ajv";
+import Ajv2019 from "ajv/dist/2019"
+import addFormats from "ajv-formats"
+const ajv = new Ajv2019();
+addFormats(ajv);
 
-const ajv = new Ajv();
 const ObjectsToCsv = require('objects-to-csv');
+ajv.addKeyword({
+    keyword: 'shouldNotNull',
+    validate: (schema, data) => {
+        if (schema) {
+            if (typeof data === 'object') return typeof data === 'object' && Object.keys(data).length > 0
+            if (typeof data === 'string') return typeof data === 'string' && data.trim() !== ''
+            if (typeof data === 'number') return typeof data === 'number'
+        }
+        else return true;
+    }
+});
 
 @Injectable()
 export class genricFunction {

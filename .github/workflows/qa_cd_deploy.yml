@@ -17,14 +17,15 @@ jobs:
         username: ${{secrets.DOCKER_USER}}
         password: ${{secrets.DOCKER_PASSWORD}}
 
-    - name: adding credentials
-      run: sed -i 's|"access_key_id"|"${{secrets.ACCESS_KEY}}"|g;s|"secret_key_id"|"${{secrets.SECRET_KEY}}"|g' index.js
+    - name: adding aws credentials
+      run: sed -i 's|"access_key_id"|"${{secrets.ACCESS_KEY}}"|g;s|"secret_key_id"|"${{secrets.SECRET_KEY}}"|g' qa_index.js
       shell: bash
 
     - name: Build and push
       uses: docker/build-push-action@v3
       with:
         context: .
+        file: ./qa.Dockerfile
         push: true
         tags: tibildocker/ingestion_ms:2
 
