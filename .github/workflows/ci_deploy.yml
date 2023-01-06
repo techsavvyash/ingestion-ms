@@ -17,9 +17,9 @@ jobs:
     - run: npm install --force
     - name: Run test scripts
       run: npm test --ci --coverage
-    - uses: artiomtr/jest-coverage-report-action@v2.0-rc.1
-      with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          # threshold: 80
-          package-manager: npm
-          test-script: npm run test:cov
+    # - uses: artiomtr/jest-coverage-report-action@v2.0-rc.1
+    #   with:
+    #       github-token: ${{ secrets.GITHUB_TOKEN }}
+    #       # threshold: 80
+    #       package-manager: npm
+    #       test-script: npm run test:cov
