@@ -7,10 +7,11 @@ import { DatasetService } from './services/dataset/dataset.service';
 import { DimensionService } from './services/dimension/dimension.service';
 import { PipelineService } from './services/pipeline/pipeline.service';
 import { EventService } from './services/event/event.service';
-import { genricFunction } from './services/gericFunction';
+import { GenericFunction } from './services/generic-function';
+import {CsvImportService} from "./services/csvImport/csvImport.service";
 @Module({
     controllers: [IngestionController],
-    providers: [DatasetService,DimensionService,PipelineService,EventService ,genricFunction, HttpCustomService],
+    providers: [DatasetService,DimensionService,PipelineService,EventService ,GenericFunction, HttpCustomService, CsvImportService],
     imports: [DatabaseModule, HttpModule]
 })
 export class IngestionModule {

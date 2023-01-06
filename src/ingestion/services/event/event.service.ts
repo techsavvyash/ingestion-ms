@@ -1,12 +1,12 @@
 import {Injectable} from '@nestjs/common';
 import {IngestionDatasetQuery} from '../../query/ingestionQuery';
 import {DatabaseService} from '../../../database/database.service';
-import {genricFunction} from '../gericFunction';
+import {GenericFunction} from '../generic-function';
 import {IEvent} from '../../interfaces/Ingestion-data'
 
 @Injectable()
 export class EventService {
-    constructor(private DatabaseService: DatabaseService, private service: genricFunction) {
+    constructor(private DatabaseService: DatabaseService, private service: GenericFunction) {
     }
 
     async createEvent(inputData: IEvent) {
