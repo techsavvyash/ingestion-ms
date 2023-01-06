@@ -26,19 +26,19 @@ export class DimensionService {
                         await this.service.writeToCSVFile(dimensionName + '_dimension', inputData.dimension);
                         return {
                             code: 200,
-                            message: "Dimension Added Successfully"
+                            message: "Dimension added successfully"
                         }
                     }
                 } else {
                     return {
                         code: 400,
-                        error: "No Dimension Found"
+                        error: "No dimension found"
                     }
                 }
             } else {
                 return {
                     code: 400,
-                    error: "Dimension Name is missing"
+                    error: "Dimension name is missing"
                 }
             }
         } catch (e) {
