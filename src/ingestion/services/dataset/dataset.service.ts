@@ -39,7 +39,7 @@ export class DatasetService {
             } else {
                 return {
                     code: 400,
-                    error: "Dataset name is Missing"
+                    error: "Dataset name is missing"
                 }
             }
         } catch (e) {

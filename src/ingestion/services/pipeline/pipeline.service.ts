@@ -29,7 +29,7 @@ export class PipelineService {
             };
             const pipelineName = pipelineData.pipeline_name;
             if (pipelineName == "") {
-                return {code: 400, error: "Pipeline Name cannot be empty"}
+                return {code: 400, error: "Pipeline name cannot be empty"}
             }
             const isValidSchema: any = await this.service.ajvValidator(pipeSchema.input, pipelineData);
             if (isValidSchema.errors) {
