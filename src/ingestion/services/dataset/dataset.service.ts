@@ -1,12 +1,12 @@
 import {HttpStatus, Injectable, Res} from '@nestjs/common';
 import {IngestionDatasetQuery} from '../../query/ingestionQuery';
 import {DatabaseService} from '../../../database/database.service';
-import {genricFunction} from '../gericFunction';
+import {GenericFunction} from '../generic-function';
 import {Dataset} from '../../interfaces/Ingestion-data'
 
 @Injectable()
 export class DatasetService {
-    constructor(private DatabaseService: DatabaseService, private service: genricFunction) {
+    constructor(private DatabaseService: DatabaseService, private service: GenericFunction) {
     }
 
     async createDataset(inputData: Dataset) {
