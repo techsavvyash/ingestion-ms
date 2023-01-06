@@ -208,7 +208,7 @@ describe('PipelineService', () => {
             "pipeline_name": "",
         };
         let resultOutput =
-            {code: 400, error: "Pipeline Name cannot be empty"};
+            {code: 400, error: "Pipeline name cannot be empty"};
 
         expect(await service.pipeline(pipelineData)).toStrictEqual(resultOutput);
     });
@@ -218,7 +218,7 @@ describe('PipelineService', () => {
             "pipeline_name": "asd"
         };
         let resultOutput =
-            {code: 400, error: "No Pipeline Found"};
+            {code: 400, error: "No pipeline found"};
 
         expect(await service.pipeline(pipelineData)).toStrictEqual(resultOutput);
     });
@@ -228,7 +228,7 @@ describe('PipelineService', () => {
             "pipeline_name": "asd"
         };
         let resultOutput =
-            {code: 200, message: "Processor Group Running Successfully"};
+            {code: 200, message: "Processor group running successfully"};
         expect(await service.pipeline(pipelineData)).toStrictEqual(resultOutput);
     }, 70000);
 
@@ -237,7 +237,7 @@ describe('PipelineService', () => {
             "pipeline_name": "asd"
         };
         let resultOutput =
-            {code: 200, message: "Processor Group Running Successfully"};
+            {code: 200, message: "Processor group running successfully"};
 
         expect(await service.pipeline(pipelineData)).toStrictEqual(resultOutput);
     }, 70000);

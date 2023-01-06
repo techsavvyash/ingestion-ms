@@ -26,20 +26,20 @@ export class DatasetService {
                         await this.service.writeToCSVFile(datasetName, inputData.dataset["items"]);
                         return {
                             code: 200,
-                            message: "Dataset Added Successfully"
+                            message: "Dataset added successfully"
                         }
                     }
                 }
                 else {
                     return {
                         code: 400,
-                        error: "No Dataset Found"
+                        error: "No dataset found"
                     }
                 }
             } else {
                 return {
                     code: 400,
-                    error: "Dataset Name is missing"
+                    error: "Dataset name is missing"
                 }
             }
         } catch (e) {
