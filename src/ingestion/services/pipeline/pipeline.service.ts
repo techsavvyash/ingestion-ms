@@ -3,12 +3,12 @@ import {HttpCustomService} from './../HttpCustomService';
 import {Injectable} from '@nestjs/common';
 import {IngestionDatasetQuery} from '../../query/ingestionQuery';
 import {DatabaseService} from '../../../database/database.service';
-import {genricFunction} from '../gericFunction';
+import {GenericFunction} from '../generic-function';
 import {Pipeline} from '../../interfaces/Ingestion-data'
 
 @Injectable()
 export class PipelineService {
-    constructor(private DatabaseService: DatabaseService, private service: genricFunction, private http: HttpCustomService,) {
+    constructor(private DatabaseService: DatabaseService, private service: GenericFunction, private http: HttpCustomService,) {
     }
 
     async pipeline(pipelineData: Pipeline): Promise<Result> {

@@ -1,6 +1,6 @@
 import {Test, TestingModule} from '@nestjs/testing';
 import {PipelineService} from './pipeline.service';
-import {genricFunction} from '../gericFunction';
+import {GenericFunction} from '../generic-function';
 import {DatabaseService} from '../../../database/database.service';
 import {DatasetService} from "../dataset/dataset.service";
 import {HttpCustomService} from './../HttpCustomService';
@@ -173,7 +173,7 @@ describe('PipelineService', () => {
 
     beforeEach(async () => {
         const module: TestingModule = await Test.createTestingModule({
-            providers: [DatabaseService, PipelineService, genricFunction, HttpCustomService,
+            providers: [DatabaseService, PipelineService, GenericFunction, HttpCustomService,
                 {
                     provide: HttpCustomService,
                     useValue: mockHttpservice
@@ -187,8 +187,8 @@ describe('PipelineService', () => {
                     useClass: DatasetService
                 },
                 {
-                    provide: genricFunction,
-                    useClass: genricFunction
+                    provide: GenericFunction,
+                    useClass: GenericFunction
                 },
                 {
                     provide: PipelineService,

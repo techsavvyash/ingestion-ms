@@ -1,5 +1,5 @@
 import {Test, TestingModule} from '@nestjs/testing';
-import {genricFunction} from '../gericFunction';
+import {GenericFunction} from '../generic-function';
 import {EventService} from './event.service';
 import {DatabaseService} from '../../../database/database.service';
 
@@ -48,7 +48,7 @@ describe('EventService', () => {
 
     beforeEach(async () => {
         const module: TestingModule = await Test.createTestingModule({
-            providers: [DatabaseService, EventService, genricFunction,
+            providers: [DatabaseService, EventService, GenericFunction,
                 {
                     provide: DatabaseService,
                     useValue: mockDatabaseService
@@ -58,8 +58,8 @@ describe('EventService', () => {
                     useClass: EventService
                 },
                 {
-                    provide: genricFunction,
-                    useClass: genricFunction
+                    provide: GenericFunction,
+                    useClass: GenericFunction
                 }],
         }).compile();
         service = module.get<EventService>(EventService);

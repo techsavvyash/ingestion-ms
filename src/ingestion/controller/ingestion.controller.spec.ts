@@ -3,7 +3,7 @@ import { IngestionController } from './ingestion.controller';
 import { DatasetService } from '../services/dataset/dataset.service';
 import { DimensionService } from '../services/dimension/dimension.service';
 import { EventService } from '../services/event/event.service';
-import { PipelineService } from '../services/pipeline/pipeline.service';;
+import { PipelineService } from '../services/pipeline/pipeline.service';
 describe('IngestionController', () => {
   let controller: IngestionController;
   beforeEach(async () => {

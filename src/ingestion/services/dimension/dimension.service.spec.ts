@@ -1,6 +1,6 @@
 import {Test, TestingModule} from '@nestjs/testing';
 import {DimensionService} from './dimension.service';
-import {genricFunction} from '../gericFunction';
+import {GenericFunction} from '../generic-function';
 import {DatabaseService} from '../../../database/database.service';
 
 describe('DimensionService', () => {
@@ -48,7 +48,7 @@ describe('DimensionService', () => {
 
     beforeEach(async () => {
         const module: TestingModule = await Test.createTestingModule({
-            providers: [DatabaseService, DimensionService, genricFunction,
+            providers: [DatabaseService, DimensionService, GenericFunction,
                 {
                     provide: DatabaseService,
                     useValue: mockDatabaseService
@@ -58,8 +58,8 @@ describe('DimensionService', () => {
                     useClass: DimensionService
                 },
                 {
-                    provide: genricFunction,
-                    useClass: genricFunction
+                    provide: GenericFunction,
+                    useClass: GenericFunction
                 }],
         }).compile();
         service = module.get<DimensionService>(DimensionService);
