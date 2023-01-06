@@ -78,7 +78,7 @@ describe('DimensionService', () => {
             }]
         };
         let resultOutput =
-            {code: 400, error: "No Dimension Found"};
+            {code: 400, error: "No dimension found"};
         expect(await service.createDimension(dimensionData)).toStrictEqual(resultOutput)
     });
 
@@ -119,7 +119,7 @@ describe('DimensionService', () => {
         };
 
         let resultOutput =
-            {code: 200, message: "Dimension Added Successfully"};
+            {code: 200, message: "Dimension added successfully"};
 
         expect(await service.createDimension(Datasetdto)).toStrictEqual(resultOutput);
 
@@ -135,7 +135,7 @@ describe('DimensionService', () => {
         };
 
         let resultOutput =
-            {code: 400, error: "Dimension Name is missing"};
+            {code: 400, error: "Dimension name is missing"};
 
         expect(await service.createDimension(Datasetdto)).toStrictEqual(resultOutput);
 

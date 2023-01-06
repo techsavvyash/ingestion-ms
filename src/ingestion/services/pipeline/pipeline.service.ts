@@ -29,7 +29,7 @@ export class PipelineService {
             };
             const pipelineName = pipelineData.pipeline_name;
             if (pipelineName == "") {
-                return {code: 400, error: "Pipeline Name cannot be empty"}
+                return {code: 400, error: "Pipeline name cannot be empty"}
             }
             const isValidSchema: any = await this.service.ajvValidator(pipeSchema.input, pipelineData);
             if (isValidSchema.errors) {
@@ -96,7 +96,7 @@ export class PipelineService {
                         await this.http.put(`${process.env.URL}/nifi-api/flow/process-groups/${pg_source['component']['id']}`, data)
                         return {
                             code: 200,
-                            message: "Processor Group Running Successfully"
+                            message: "Processor group running successfully"
                         }
                     }
                     else {
@@ -110,7 +110,7 @@ export class PipelineService {
                         await this.http.put(`${process.env.URL}/nifi-api/flow/process-groups/${pg_source['component']['id']}`, data);
                         return {
                             code: 200,
-                            message: "Processor Group Running Successfully"
+                            message: "Processor group running successfully"
                         }
 
                     }
@@ -119,7 +119,7 @@ export class PipelineService {
                 else {
                     return {
                         code: 400,
-                        error: "No Pipeline Found"
+                        error: "No pipeline found"
                     }
                 }
             }
@@ -237,8 +237,8 @@ export class PipelineService {
             if (res.data) {
                 return res.data;
             }
-        } catch (error) {
-            return {code: 400, error: "could not get Processor Group Port"}
+        }catch(error){
+            return {code:400, error:"could not get Processor group port"}
         }
 
 

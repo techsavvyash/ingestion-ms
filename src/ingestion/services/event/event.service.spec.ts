@@ -78,7 +78,7 @@ describe('EventService', () => {
             }]
         };
         let resultOutput =
-            {code: 400, error: "No Event Found"};
+            {code: 400, error: "No event found"};
         expect(await service.createEvent(eventData)).toStrictEqual(resultOutput)
     });
 
@@ -119,7 +119,7 @@ describe('EventService', () => {
         };
 
         let resultOutput =
-            {code: 200, message: "Event Added Successfully"};
+            {code: 200, message: "Event added successfully"};
 
         expect(await service.createEvent(eventData)).toStrictEqual(resultOutput);
 
@@ -135,7 +135,7 @@ describe('EventService', () => {
         };
 
         let resultOutput =
-            {code: 400, error: "Event Name is missing"};
+            {code: 400, error: "Event name is missing"};
 
         expect(await service.createEvent(eventData)).toStrictEqual(resultOutput);
 

@@ -26,19 +26,19 @@ export class EventService {
                         await this.service.writeToCSVFile(eventName + '_event', inputData.event);
                         return {
                             code: 200,
-                            message: "Event Added Successfully"
+                            message: "Event added successfully"
                         }
                     }
                 } else {
                     return {
                         code: 400,
-                        error: "No Event Found"
+                        error: "No event found"
                     }
                 }
             } else {
                 return {
                     code: 400,
-                    error: "Event Name is missing"
+                    error: "Event name is missing"
                 }
             }
         } catch (e) {

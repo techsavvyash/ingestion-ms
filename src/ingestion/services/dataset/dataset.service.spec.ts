@@ -217,7 +217,7 @@ describe('DatasetService', () => {
         };
 
         let resultOutput =
-            {code: 400, error: "No Dataset Found"};
+            {code: 400, error: "No dataset found"};
 
         expect(await service.createDataset(Datasetdto)).toStrictEqual(resultOutput);
 
@@ -264,7 +264,7 @@ describe('DatasetService', () => {
         };
 
         let resultOutput =
-            {code: 200, message: "Dataset Added Successfully"};
+            {code: 200, message: "Dataset added successfully"};
 
         expect(await service.createDataset(Datasetdto)).toStrictEqual(resultOutput);
 
@@ -281,7 +281,7 @@ describe('DatasetService', () => {
         };
 
         let resultOutput =
-            {code: 400, error: "Dataset Name is missing"};
+            {code: 400, error: "Dataset name is missing"};
 
         expect(await service.createDataset(Datasetdto)).toStrictEqual(resultOutput);
 
