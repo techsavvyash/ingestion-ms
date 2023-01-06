@@ -3,7 +3,9 @@ on:
   pull_request:
     types:
       - opened
-    branches: [dev]
+    branches:
+      - dev
+      - staging      
 
 jobs:
   build-and-deploy:
@@ -13,5 +15,23 @@ jobs:
     - name: Node LTS versions
       uses: msimerson/node-lts-versions@v1.1.1
     - run: npm install --force
-    - name: Testing code coverage
+    - name: Run test scripts
       run: npm test --ci --coverage
+    - uses: artiomtr/jest-coverage-report-action@v2.0-rc.1
+      with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          threshold: 80
+          package-manager: npm
+          test-script: npm run test:cov
+    
+
+
+          #    - name: Coveralls
+          #uses: coverallsapp/github-action@master
+          #with:
+          # github-token: ${{ secrets.GITHUB_TOKEN }}
+
+            #- name: SonarCloud Scan
+            #uses: sonarsource/sonarcloud-github-action@master
+            #env:
+            #GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

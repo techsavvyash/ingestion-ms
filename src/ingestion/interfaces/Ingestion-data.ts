@@ -11,8 +11,7 @@ export interface Dataset{
     dataset:object
 }
 export interface Pipeline{
-    pipeline_name: string,
-    schedule_type: string
+    pipeline_name: string
 }
 export interface Result{
     code: number,
