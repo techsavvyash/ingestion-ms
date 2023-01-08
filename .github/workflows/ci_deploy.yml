@@ -8,7 +8,7 @@ on:
       - staging      
 
 jobs:
-  build-and-deploy:
+  build and code coverage testing:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
