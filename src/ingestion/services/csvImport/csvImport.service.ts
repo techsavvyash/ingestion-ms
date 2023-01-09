@@ -77,12 +77,25 @@ export class CsvImportService {
 
                     })
                     .on('end', async () => {
-                        // flush the remaining csv data to API
-                        if (ingestionTypeBodyArray.length > 0) {
-                            batchCounter = 0;
-                            this.resetAndMakeAPICall(ingestionType, ingestionName, ingestionTypeBodyArray, csvReadStream);
-                            ingestionTypeBodyArray = []
+                        try {
+                            // flush the remaining csv data to API
+                            if (ingestionTypeBodyArray.length > 0) {
+                                batchCounter = 0;
+                                await this.resetAndMakeAPICall(ingestionType, ingestionName, ingestionTypeBodyArray, csvReadStream, true);
+                                ingestionTypeBodyArray = []
+                            }
+                        } catch (apiErr) {
+                            let apiErrorData: any = {};
+                            try {
+                                apiErrorData = JSON.parse(apiErr.message);
+                            } catch (jsonParseErr) {
+                                apiErrorData.message = apiErr.message;
+                            }
+                            console.error('csvImport.service.on End API err: ', apiErrorData.message);
+
+                            reject({code: 400, error: apiErrorData.message});
                         }
+
                         // delete the file
                         try {
                             fs.unlinkSync(`./files/${file.originalname}`);
@@ -96,16 +109,8 @@ export class CsvImportService {
         });
     }
 
-    /**
-     * Rest the body array and make the api call
-     * @param {string} ingestionType input from api body
-     * @param {string} ingestionName input from api body
-     * @param {any[]} ingestionTypeBodyArray pass by reference from parent
-     * @param reject pass by the parent since to avoid another try catch block, convert to promise if required and confusing
-     * @returns {Promise<void>}
-     */
     async resetAndMakeAPICall(ingestionType: string, ingestionName: string, ingestionTypeBodyArray: any[],
-                              csvReadStream: ReadStream) {
+                              csvReadStream: ReadStream, isEnd = false) {
         let postBody: any = {};
         const url: string = process.env.URL + `/ingestion/${ingestionType}`;
         const mainKey = ingestionType + '_name';
@@ -113,9 +118,16 @@ export class CsvImportService {
         postBody[ingestionType] = [...ingestionTypeBodyArray];
         try {
             await this.http.post(url, postBody);
-            csvReadStream.resume();
+            if (!isEnd) {
+                csvReadStream.resume();
+            }
         } catch (apiErr) {
-            csvReadStream.destroy(apiErr.response?.data || apiErr.message);
+            console.log('csvImport.service.resetAndMakeAPICall: ', apiErr.response?.data, apiErr.message);
+            if (isEnd) {
+                throw new Error(JSON.stringify(apiErr.response?.data || apiErr.message))
+            } else {
+                csvReadStream.destroy(apiErr.response?.data || apiErr.message);
+            }
             return;
         }
     }
