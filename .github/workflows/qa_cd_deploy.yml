@@ -42,7 +42,7 @@ jobs:
         script: |
           docker login
           docker pull tibildocker/ingestion_ms
-          docker stop cqube_v5_ingest_app_qa || true
-          docker rm cqube_v5_ingest_app_qa || true
+          docker stop cqube_v5_ingest_app_1 || true
+          docker rm cqube_v5_ingest_app_1 || true
           docker rmi tibildocker/ingestion_ms:qa || true
-          docker run -d --name cqube_v5_ingest_app_qa -p 3000:3000 --network cqube_v5_cqube_net tibildocker/ingestion_ms:qa
+          docker run -d --name cqube_v5_ingest_app_1 -p 3000:3000 --network cqube_v5_cqube_net tibildocker/ingestion_ms:qa
