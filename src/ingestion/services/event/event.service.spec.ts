@@ -140,4 +140,46 @@ describe('EventService', () => {
         expect(await service.createEvent(eventData)).toStrictEqual(resultOutput);
 
     });
+
+    it('Exception', async () => {
+
+        const mockError = {
+            executeQuery: jest.fn().mockImplementation(() => {
+                throw Error("exception test")
+            })
+        };
+
+        const module: TestingModule = await Test.createTestingModule({
+            providers: [DatabaseService, EventService, GenericFunction,
+                {
+                    provide: DatabaseService,
+                    useValue: mockError
+                },
+                {
+                    provide: EventService,
+                    useClass: EventService
+                },
+                {
+                    provide: GenericFunction,
+                    useClass: GenericFunction
+                }
+            ],
+        }).compile();
+        let localService: EventService = module.get<EventService>(EventService);
+        const Eventdto = {
+            "event_name": "student_attendanceeee",
+            "event": [{
+                "school_id": "6677",
+                "grade": "t"
+            }]
+        };
+
+        let resultOutput = "Error: exception test";
+
+        try {
+            await localService.createEvent(Eventdto);
+        } catch (e) {
+            expect(e.message).toEqual(resultOutput);
+        }
+    });
 });
