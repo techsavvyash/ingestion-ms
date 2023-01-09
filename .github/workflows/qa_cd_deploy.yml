@@ -27,7 +27,7 @@ jobs:
         context: .
         file: ./qa.Dockerfile
         push: true
-        tags: tibildocker/ingestion_ms:2
+        tags: tibildocker/ingestion_ms:qa
 
     - name: Docker pull image and deploy from hub
       env:
@@ -42,7 +42,7 @@ jobs:
         script: |
           docker login
           docker pull tibildocker/ingestion_ms
-          docker stop cqube_v5_ingest_app_2 || true
-          docker rm cqube_v5_ingest_app_2 || true
-          docker rmi tibildocker/ingestion_ms:2 || true
-          docker run -d --name cqube_v5_ingest_app_2 -p 3000:3000 --network cqube_v5_cqube_net tibildocker/ingestion_ms:2
+          docker stop cqube_v5_ingest_app_1 || true
+          docker rm cqube_v5_ingest_app_1 || true
+          docker rmi tibildocker/ingestion_ms:qa || true
+          docker run -d --name cqube_v5_ingest_app_1 -p 3000:3000 --network cqube_v5_cqube_net tibildocker/ingestion_ms:qa
