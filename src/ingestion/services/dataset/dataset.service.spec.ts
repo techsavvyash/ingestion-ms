@@ -286,21 +286,47 @@ describe('DatasetService', () => {
         expect(await service.createDataset(Datasetdto)).toStrictEqual(resultOutput);
 
     });
-    // it('Exception', async () => {
-    //     const Datasetdto = {
-    //         "dataset_name": "student_attendance_by_class",
-    //         "dataset": {
-    //             "items": [{
-    //                 "school_id": "6677",
-    //                 "grade": "t"
-    //             }]
-    //         }
-    //     };
-    //
-    //     let resultOutput =
-    //         {code: 400, error: "test error"};
-    //
-    //     expect(await service.createDataset(Datasetdto)).toStrictEqual(resultOutput);
-    //
-    // });
+    it('Exception', async () => {
+
+        const mockError = {
+            executeQuery: jest.fn().mockImplementation(() => {
+                    throw Error("exception test")
+                })
+        };
+
+        const module: TestingModule = await Test.createTestingModule({
+            providers: [DatabaseService, DatasetService, GenericFunction,
+                {
+                    provide: DatabaseService,
+                    useValue: mockError
+                },
+                {
+                    provide: DatasetService,
+                    useClass: DatasetService
+                },
+                {
+                    provide: GenericFunction,
+                    useClass: GenericFunction
+                }
+            ],
+        }).compile();
+        let localService:DatasetService = module.get<DatasetService>(DatasetService);
+        const Datasetdto = {
+            "dataset_name": "student_attendance_by_classss",
+            "dataset": {
+                "items": [{
+                    "school_id": "6677",
+                    "grade": "t"
+                }]
+            }
+        };
+
+        let resultOutput = "Error: exception test";
+
+        try {
+            await localService.createDataset(Datasetdto);
+        } catch (e) {
+            expect(e.message).toEqual(resultOutput);
+        }
+    });
 });
