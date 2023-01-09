@@ -27,7 +27,7 @@ jobs:
         context: .
         file: ./dev.Dockerfile
         push: true
-        tags: tibildocker/ingestion_ms:1
+        tags: tibildocker/ingestion_ms:dev
 
     - name: Docker pull image and deploy from hub
       env:
@@ -35,7 +35,7 @@ jobs:
         DOCKER_PASSWORD: ${{secrets.DOCKER_PASSWORD}}
       uses: appleboy/ssh-action@master
       with:
-        HOST: ${{ secrets.HOST }}
+        HOST: ${{ secrets.DEV_HOST }}
         USERNAME: ${{ secrets.USERNAME }}
         KEY: ${{ secrets.KEY }}
         PORT: '22'
@@ -44,5 +44,5 @@ jobs:
           docker pull tibildocker/ingestion_ms
           docker stop cqube_v5_ingest_app_1 || true
           docker rm cqube_v5_ingest_app_1 || true
-          docker rmi tibildocker/ingestion_ms:1 || true
-          docker run -d --name cqube_v5_ingest_app_1 -p 3000:3000 --network cqube_v5_cqube_net tibildocker/ingestion_ms:1
+          docker rmi tibildocker/ingestion_ms:dev || true
+          docker run -d --name cqube_v5_ingest_app_1 -p 3000:3000 --network cqube_v5_cqube_net tibildocker/ingestion_ms:dev
