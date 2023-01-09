@@ -2,6 +2,7 @@ import {Test, TestingModule} from '@nestjs/testing';
 import {DimensionService} from './dimension.service';
 import {GenericFunction} from '../generic-function';
 import {DatabaseService} from '../../../database/database.service';
+import {EventService} from "../event/event.service";
 
 describe('DimensionService', () => {
     let service: DimensionService;
@@ -110,7 +111,7 @@ describe('DimensionService', () => {
     });
 
     it('Dimension Added Successfully', async () => {
-        const Datasetdto = {
+        const dimensionData = {
             "dimension_name": "school",
             "dimension": [{
                 "school_id": "6677",
@@ -121,12 +122,12 @@ describe('DimensionService', () => {
         let resultOutput =
             {code: 200, message: "Dimension added successfully"};
 
-        expect(await service.createDimension(Datasetdto)).toStrictEqual(resultOutput);
+        expect(await service.createDimension(dimensionData)).toStrictEqual(resultOutput);
 
     });
 
     it('Dimension Name is Missing', async () => {
-        const Datasetdto = {
+        const dimensionData = {
             "dimension_name": "",
             "dimension": [{
                 "school_id": "6677",
@@ -137,7 +138,49 @@ describe('DimensionService', () => {
         let resultOutput =
             {code: 400, error: "Dimension name is missing"};
 
-        expect(await service.createDimension(Datasetdto)).toStrictEqual(resultOutput);
+        expect(await service.createDimension(dimensionData)).toStrictEqual(resultOutput);
 
+    });
+
+    it('Exception', async () => {
+
+        const mockError = {
+            executeQuery: jest.fn().mockImplementation(() => {
+                throw Error("exception test")
+            })
+        };
+
+        const module: TestingModule = await Test.createTestingModule({
+            providers: [DatabaseService, DimensionService, GenericFunction,
+                {
+                    provide: DatabaseService,
+                    useValue: mockError
+                },
+                {
+                    provide: DimensionService,
+                    useClass: DimensionService
+                },
+                {
+                    provide: GenericFunction,
+                    useClass: GenericFunction
+                }
+            ],
+        }).compile();
+        let localService: DimensionService = module.get<DimensionService>(DimensionService);
+        const dimensionData = {
+            "dimension_name": "student_attendanceeee",
+            "dimension": [{
+                "school_id": "6677",
+                "grade": "t"
+            }]
+        };
+
+        let resultOutput = "Error: exception test";
+
+        try {
+            await localService.createDimension(dimensionData);
+        } catch (e) {
+            expect(e.message).toEqual(resultOutput);
+        }
     });
 });
