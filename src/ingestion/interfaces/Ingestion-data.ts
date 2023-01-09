@@ -13,6 +13,9 @@ export interface Dataset{
 export interface Pipeline{
     pipeline_name: string
 }
+export interface CsvImport{
+    pipeline_name: string
+}
 export interface Result{
     code: number,
     message?: string,

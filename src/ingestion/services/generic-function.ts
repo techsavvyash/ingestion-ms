@@ -19,7 +19,7 @@ ajv.addKeyword({
 });
 
 @Injectable()
-export class genricFunction {
+export class GenericFunction {
 
     // for handling locking and unlocking
     private currentlyLockedFiles: any = {};
@@ -49,7 +49,7 @@ export class genricFunction {
         }
     }
 
-    async ajvValidator(schema, inputData) {
+    ajvValidator(schema, inputData) {
         const isValid = ajv.validate(schema, inputData);
         if (isValid) {
             return inputData;
