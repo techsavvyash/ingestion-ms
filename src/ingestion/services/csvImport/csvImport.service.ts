@@ -1,6 +1,5 @@
 import {Injectable} from "@nestjs/common";
 import {HttpCustomService} from "../HttpCustomService";
-import {Express} from 'express';
 import {Result} from "../../interfaces/Ingestion-data";
 import {GenericFunction} from "../generic-function";
 import {ReadStream} from "fs";
@@ -40,7 +39,7 @@ export class CsvImportService {
     constructor(private http: HttpCustomService, private service: GenericFunction) {
     }
 
-    async readAndParseFile(inputBody: CSVInputBodyInterface, file: Express.Multer.File): Promise<Result> {
+    async readAndParseFile(inputBody: CSVInputBodyInterface, fileCompletePath: string): Promise<Result> {
         return new Promise(async (resolve, reject) => {
             const isValidSchema: any = await this.service.ajvValidator(csvImportSchema, inputBody);
             if (isValidSchema.errors) {
@@ -51,7 +50,7 @@ export class CsvImportService {
                 const batchLimit: number = 1000;
                 let batchCounter: number = 0,
                     ingestionTypeBodyArray: any = [];
-                const csvReadStream = fs.createReadStream(file.path)
+                const csvReadStream = fs.createReadStream(fileCompletePath)
                     .pipe(parse({headers: true}))
                     .on('data', (csvrow) => {
 
@@ -73,6 +72,8 @@ export class CsvImportService {
                     })
                     .on('error', (err) => {
                         console.error('Steam error -> : ', err);
+                        // delete the file
+                        fs.unlinkSync(fileCompletePath);
                         reject({code: 400, error: err.message});
 
                     })
@@ -86,24 +87,12 @@ export class CsvImportService {
                             }
                         } catch (apiErr) {
                             let apiErrorData: any = {};
-                            try {
-                                apiErrorData = JSON.parse(apiErr.message);
-                            } catch (jsonParseErr) {
-                                apiErrorData.message = apiErr.message;
-                            }
-                            console.error('csvImport.service.on End API err: ', apiErrorData.message);
-
+                            apiErrorData = JSON.parse(apiErr.message);
                             reject({code: 400, error: apiErrorData.message});
                         }
-
                         // delete the file
-                        try {
-                            fs.unlinkSync(`./files/${file.originalname}`);
-                            resolve({code: 200, message: 'CSV Uploaded Successfully'});
-                        } catch (delErr) {
-                            console.error('routes.: unable to delete file ', delErr);
-                            resolve({code: 200, message: 'CSV Upload done but unable to delete'});
-                        }
+                        fs.unlinkSync(fileCompletePath);
+                        resolve({code: 200, message: 'CSV Uploaded Successfully'});
                     });
             }
         });
@@ -122,7 +111,7 @@ export class CsvImportService {
                 csvReadStream.resume();
             }
         } catch (apiErr) {
-            console.log('csvImport.service.resetAndMakeAPICall: ', apiErr.response?.data, apiErr.message);
+            console.error('csvImport.service.resetAndMakeAPICall: ', apiErr.response?.data, apiErr.message);
             if (isEnd) {
                 throw new Error(JSON.stringify(apiErr.response?.data || apiErr.message))
             } else {

@@ -241,4 +241,46 @@ describe('PipelineService', () => {
 
         expect(await service.pipeline(pipelineData)).toStrictEqual(resultOutput);
     }, 70000);
+
+    it('Exception', async () => {
+
+        const mockError = {
+            executeQuery: jest.fn().mockImplementation(() => {
+                throw Error("exception test")
+            })
+        };
+
+        const module: TestingModule = await Test.createTestingModule({
+            providers: [DatabaseService, PipelineService, GenericFunction,
+                {
+                    provide: HttpCustomService,
+                    useValue: mockHttpservice
+                },
+                {
+                    provide: DatabaseService,
+                    useValue: mockError
+                },
+                {
+                    provide: PipelineService,
+                    useClass: PipelineService
+                },
+                {
+                    provide: GenericFunction,
+                    useClass: GenericFunction
+                }
+            ],
+        }).compile();
+        let localService: PipelineService = module.get<PipelineService>(PipelineService);
+        const pipelineData = {
+            "pipeline_name": "asd"
+        };
+
+        let resultOutput = "Error: exception test";
+
+        try {
+            await localService.pipeline(pipelineData);
+        } catch (e) {
+            expect(e.message).toEqual(resultOutput);
+        }
+    });
 });

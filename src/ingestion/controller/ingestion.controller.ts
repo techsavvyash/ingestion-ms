@@ -96,10 +96,6 @@ export class IngestionController {
     @UseInterceptors(FileInterceptor('file', {
         storage: diskStorage({
             destination: './files',
-            filename: function (req, file, cb) {
-                console.log('csvImport.service.: ', file);
-                cb(null, file.originalname)
-            }
         })
     }))
     @Post('/csv')
@@ -112,7 +108,7 @@ export class IngestionController {
         }),
     ) file: Express.Multer.File) {
         try {
-            let result = await this.csvImportService.readAndParseFile(body, file);
+            let result = await this.csvImportService.readAndParseFile(body, file.path);
             if (result.code == 400) {
                 response.status(400).send({message: result.error});
             } else {
