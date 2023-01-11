@@ -20,7 +20,7 @@ let csvImportSchema = {
         },
         "ingestion_name": {
             "type": "string",
-            "shouldNotNull": true
+            "shouldnotnull": true
         }
     },
     "required": [
