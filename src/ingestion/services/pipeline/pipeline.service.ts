@@ -19,7 +19,7 @@ export class PipelineService {
                     "properties": {
                         "pipeline_name": {
                             "type": "string",
-                            "shouldNotNull": true
+                            "shouldnotnull": true
                         },
 
                     },
