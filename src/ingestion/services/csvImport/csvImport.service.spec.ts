@@ -149,7 +149,7 @@ async function errorCSVTest(service,filePath){
     let resultOutput = {code: 400, error: errorResponse.response.data.message};
     try {
         // promise reject is an error to be catched
-        const outputResult = await service.readAndParseFile(inputData, filePath);
+        await service.readAndParseFile(inputData, filePath);
     } catch (someErr) {
         expect(someErr).toStrictEqual(resultOutput);
     }

@@ -104,7 +104,13 @@ export class CsvImportService {
         const url: string = process.env.URL + `/ingestion/${ingestionType}`;
         const mainKey = ingestionType + '_name';
         postBody[mainKey] = ingestionName;
-        postBody[ingestionType] = [...ingestionTypeBodyArray];
+        if (ingestionType === 'dataset') {
+            postBody[ingestionType] = {
+                "items": [...ingestionTypeBodyArray]
+            }
+        } else {
+            postBody[ingestionType] = [...ingestionTypeBodyArray];
+        }
         try {
             await this.http.post(url, postBody);
             if (!isEnd) {

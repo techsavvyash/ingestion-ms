@@ -2,7 +2,6 @@ import {Test, TestingModule} from '@nestjs/testing';
 import {DimensionService} from './dimension.service';
 import {GenericFunction} from '../generic-function';
 import {DatabaseService} from '../../../database/database.service';
-import {EventService} from "../event/event.service";
 
 describe('DimensionService', () => {
     let service: DimensionService;
