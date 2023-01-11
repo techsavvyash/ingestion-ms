@@ -17,8 +17,8 @@ jobs:
     - run: npm install --force
     - name: Run test scripts
       run: npm test --ci --coverage
-    # - name: Coverage
-    #     run: npm run test:cov
+    - name: Coverage
+        run: npm run test:cov
 
   # coverage:
   #       runs-on: ubuntu-latest
