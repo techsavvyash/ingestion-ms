@@ -18,7 +18,8 @@ export class PipelineService {
                     "type": "object",
                     "properties": {
                         "pipeline_name": {
-                            "type": "string"
+                            "type": "string",
+                            "shouldNotNull": true
                         },
 
                     },
@@ -237,8 +238,8 @@ export class PipelineService {
             if (res.data) {
                 return res.data;
             }
-        }catch(error){
-            return {code:400, error:"could not get Processor group port"}
+        } catch (error) {
+            return {code: 400, error: "could not get Processor group port"}
         }
 
 
@@ -247,6 +248,7 @@ export class PipelineService {
     async connect(sourceId, destinationId, relationship, pg_source_id) {
         const pg_ports = await this.getProcessorGroupPorts(pg_source_id);
         if (pg_ports) {
+            console.log('pipeline.service.pg_ports: ', pg_ports);
             const pg_id = pg_ports['processGroupFlow']['id'];
             const json_body = {
                 "revision": {
