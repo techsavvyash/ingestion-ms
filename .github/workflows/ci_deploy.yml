@@ -18,7 +18,7 @@ jobs:
     - name: Run test scripts
       run: npm test --ci --coverage
     - name: Coverage
-        run: npm run test:cov
+      run: npm run test:cov
 
   # coverage:
   #       runs-on: ubuntu-latest
