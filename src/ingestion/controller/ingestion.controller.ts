@@ -24,7 +24,7 @@ interface CSVBody {
     ingestion_name: string;
 }
 
-@Controller('/api/ingestion')
+@Controller('ingestion')
 export class IngestionController {
     constructor(
         private datasetservice: DatasetService, private dimesionService: DimensionService
