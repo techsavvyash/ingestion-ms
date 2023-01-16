@@ -4,7 +4,6 @@ import {GenericFunction} from '../generic-function';
 import {DatabaseService} from '../../../database/database.service';
 import {DatasetService} from "../dataset/dataset.service";
 import {HttpCustomService} from './../HttpCustomService';
-import {HttpService} from "@nestjs/axios";
 
 describe('PipelineService', () => {
     let service: PipelineService;
@@ -279,6 +278,235 @@ describe('PipelineService', () => {
 
         try {
             await localService.pipeline(pipelineData);
+        } catch (e) {
+            expect(e.message).toEqual(resultOutput);
+        }
+    });
+
+    it('addProcessor Failed', async () => {
+
+        const mockTransaction = {
+            createQueryRunner: jest.fn().mockImplementation(() => ({
+                connect: jest.fn(),
+                startTransaction: jest.fn(),
+                release: jest.fn(),
+                rollbackTransaction: jest.fn(),
+                commitTransaction: jest.fn(),
+            })),
+            get: jest.fn().mockReturnValue({
+                data: {
+                    processGroupFlow: {
+                        id: 1,
+                        flow: {
+                            processors: [{
+                                component: {
+                                    name: "generateFlowFile",
+                                    id: 1
+                                },
+                                revision: {
+                                    version: 1.1
+                                }
+                            }, {
+                                component: {name: "pythonCode", id: 2},
+                                revision: {
+                                    version: 1.1
+                                }
+                            },
+                                {
+                                    component: {name: "successLogMessage", id: 3},
+                                    revision: {
+                                        version: 1.1
+                                    }
+                                }, {
+                                    component: {
+                                        name: "failedLogMessage",
+                                        id: 4
+                                    },
+                                    revision: {
+                                        version: 1.1
+                                    }
+                                }]
+                        }
+                    }
+                }
+            }),
+            post: jest.fn()
+        };
+
+        const module: TestingModule = await Test.createTestingModule({
+            providers: [DatabaseService, PipelineService, GenericFunction, HttpCustomService,
+                {
+                    provide: HttpCustomService,
+                    useValue: mockTransaction
+                },
+                {
+                    provide: DatabaseService,
+                    useValue: mockTransaction
+                },
+                {
+                    provide: DatasetService,
+                    useClass: DatasetService
+                },
+                {
+                    provide: GenericFunction,
+                    useClass: GenericFunction
+                },
+                {
+                    provide: PipelineService,
+                    useClass: PipelineService
+                }
+            ]
+        }).compile();
+
+        service = module.get<PipelineService>(PipelineService);
+
+        let resultOutput = "Failed to create the processor";
+
+        try {
+            await service.addProcessor("student_attendance_by_class", "asd", 1);
+        } catch (e) {
+            expect(e.message).toEqual(resultOutput);
+        }
+    });
+
+    it('addProcessorGroup Failed', async () => {
+
+        const mockTransaction = {
+            createQueryRunner: jest.fn().mockImplementation(() => ({
+                connect: jest.fn(),
+                startTransaction: jest.fn(),
+                release: jest.fn(),
+                rollbackTransaction: jest.fn(),
+                commitTransaction: jest.fn(),
+                query: jest.fn().mockReturnValueOnce({pid: 1})
+                    .mockReturnValueOnce([{pid: 1}]).mockImplementation(() => {
+                        throw Error("exception test")
+                    })
+            })),
+            query: jest.fn().mockReturnValueOnce([{length: 1}]),
+            get: jest.fn().mockReturnValueOnce({data: {component: {id: 1}}}),
+            post: jest.fn()
+        };
+
+        const module: TestingModule = await Test.createTestingModule({
+            providers: [DatabaseService, PipelineService, GenericFunction, HttpCustomService,
+                {
+                    provide: HttpCustomService,
+                    useValue: mockTransaction
+                },
+                {
+                    provide: DatabaseService,
+                    useValue: mockTransaction
+                },
+                {
+                    provide: DatasetService,
+                    useClass: DatasetService
+                },
+                {
+                    provide: GenericFunction,
+                    useClass: GenericFunction
+                },
+                {
+                    provide: PipelineService,
+                    useClass: PipelineService
+                }
+            ]
+        }).compile();
+
+        service = module.get<PipelineService>(PipelineService);
+
+        let resultOutput = "Failed to create the processor group";
+
+        try {
+            await service.addProcessorGroup("student_attendance_by_class");
+        } catch (e) {
+            expect(e.message).toEqual(resultOutput);
+        }
+    });
+
+    it('connect Failed', async () => {
+
+        const mockTransaction = {
+            createQueryRunner: jest.fn().mockImplementation(() => ({
+                connect: jest.fn(),
+                startTransaction: jest.fn(),
+                release: jest.fn(),
+                rollbackTransaction: jest.fn(),
+                commitTransaction: jest.fn(),
+                query: jest.fn()
+            })),
+            query: jest.fn().mockReturnValueOnce([{length: 1}]),
+            get: jest.fn().mockReturnValueOnce({
+                data: {
+                    processGroupFlow: {
+                        id: 1,
+                        flow: {
+                            processors: [{
+                                component: {
+                                    name: "generateFlowFile",
+                                    id: 1
+                                },
+                                revision: {
+                                    version: 1.1
+                                }
+                            }, {
+                                component: {name: "pythonCode", id: 2},
+                                revision: {
+                                    version: 1.1
+                                }
+                            },
+                                {
+                                    component: {name: "successLogMessage", id: 3},
+                                    revision: {
+                                        version: 1.1
+                                    }
+                                }, {
+                                    component: {
+                                        name: "failedLogMessage",
+                                        id: 4
+                                    },
+                                    revision: {
+                                        version: 1.1
+                                    }
+                                }]
+                        }
+                    }
+                }
+            }),
+            post: jest.fn()
+        };
+
+        const module: TestingModule = await Test.createTestingModule({
+            providers: [DatabaseService, PipelineService, GenericFunction, HttpCustomService,
+                {
+                    provide: HttpCustomService,
+                    useValue: mockTransaction
+                },
+                {
+                    provide: DatabaseService,
+                    useValue: mockTransaction
+                },
+                {
+                    provide: DatasetService,
+                    useClass: DatasetService
+                },
+                {
+                    provide: GenericFunction,
+                    useClass: GenericFunction
+                },
+                {
+                    provide: PipelineService,
+                    useClass: PipelineService
+                }
+            ]
+        }).compile();
+
+        service = module.get<PipelineService>(PipelineService);
+
+        let resultOutput = "message:Failed connected the processor from 1 to 2";
+
+        try {
+            await service.connect(1, 2, ["success"], 1);
         } catch (e) {
             expect(e.message).toEqual(resultOutput);
         }

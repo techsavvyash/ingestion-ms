@@ -20,7 +20,7 @@ let csvImportSchema = {
         },
         "ingestion_name": {
             "type": "string",
-            "shouldNotNull": true
+            "shouldnotnull": true
         }
     },
     "required": [
@@ -47,7 +47,7 @@ export class CsvImportService {
             } else {
                 const ingestionType = inputBody.ingestion_type, ingestionName = inputBody.ingestion_name;
 
-                const batchLimit: number = 1000;
+                const batchLimit: number = 100000;
                 let batchCounter: number = 0,
                     ingestionTypeBodyArray: any = [];
                 const csvReadStream = fs.createReadStream(fileCompletePath)

@@ -7,7 +7,7 @@ addFormats(ajv);
 
 const ObjectsToCsv = require('objects-to-csv');
 ajv.addKeyword({
-    keyword: 'shouldNotNull',
+    keyword: 'shouldnotnull',
     validate: (schema, data) => {
         if (schema) {
             if (typeof data === 'object') return typeof data === 'object' && Object.keys(data).length > 0
