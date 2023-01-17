@@ -1,4 +1,4 @@
-import {Dataset, Dimension, IEvent, Pipeline} from '../interfaces/Ingestion-data';
+import {Dataset, Dimension, IEvent, Pipeline, Result} from '../interfaces/Ingestion-data';
 import {
     Body,
     Controller, FileTypeValidator,
@@ -65,11 +65,15 @@ export class IngestionController {
     @Post('/event')
     async createEvent(@Body() inputData: IEvent, @Res()response: Response) {
         try {
-            let result = await this.eventService.createEvent(inputData);
+            let result: Result = await this.eventService.createEvent(inputData);
             if (result.code == 400) {
                 response.status(400).send({"message": result.error});
             } else {
-                response.status(200).send({"message": result.message});
+                console.log('ingestion.controller.createEvent: ', result);
+                response.status(200).send({
+                    "message": result.message, invalid_record_count: result.errorCounter,
+                    valid_record_count: result.validCounter
+                });
             }
         } catch (e) {
             console.error('create-event-impl: ', e.message);
@@ -112,11 +116,14 @@ export class IngestionController {
             if (result.code == 400) {
                 response.status(400).send({message: result.error});
             } else {
-                response.status(200).send({message: result.message});
+                response.status(200).send({
+                    message: result.message, invalid_record_count: result.errorCounter,
+                    valid_record_count: result.validCounter
+                });
             }
         } catch (e) {
             console.error('ingestion.controller.csv: ', e);
-            response.status(400).send({message:e.error || e.message});
+            response.status(400).send({message: e.error || e.message});
             // throw new Error(e);
         }
     }
