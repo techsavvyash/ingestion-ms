@@ -89,7 +89,6 @@ export class CsvImportService {
                             if (ingestionTypeBodyArray.length > 0) {
                                 batchCounter = 0;
                                 await this.resetAndMakeAPICall(ingestionType, ingestionName, ingestionTypeBodyArray, csvReadStream, apiResponseDataList, true);
-                                console.log('csvImport.service.CSVAPIResponse: ', apiResponseDataList);
                                 ingestionTypeBodyArray = []
                             }
                             let validObject = 0, invalidObject = 0;
@@ -127,7 +126,6 @@ export class CsvImportService {
         }
         try {
             let response = await this.http.post<CSVAPIResponse>(url, postBody);
-            // console.log('csvImport.service.resetAndMakeAPICall: ', response.data);
             apiResponseData.push(response.data);
             if (!isEnd) {
                 csvReadStream.resume();
