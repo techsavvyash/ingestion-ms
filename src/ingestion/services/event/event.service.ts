@@ -12,7 +12,7 @@ export class EventService {
     async createEvent(inputData: IEvent) {
         try {
             if (inputData.event_name) {
-                
+
                 const eventName = inputData.event_name;
                 const queryStr = await IngestionDatasetQuery.getEvents(eventName);
                 const queryResult = await this.DatabaseService.executeQuery(queryStr.query, queryStr.values);

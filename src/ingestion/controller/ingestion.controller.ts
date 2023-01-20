@@ -116,7 +116,7 @@ export class IngestionController {
             }
         } catch (e) {
             console.error('ingestion.controller.csv: ', e);
-            response.status(400).send({message:e.error || e.message});
+            response.status(400).send({message: e.error || e.message});
             // throw new Error(e);
         }
     }

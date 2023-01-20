@@ -1,23 +1,28 @@
-export interface Dimension{
+export interface Dimension {
     dimension_name: string,
-    dimension:object[];
+    dimension: object[];
 }
-export interface IEvent{
+
+export interface IEvent {
     event_name: string,
-    event:object[];
+    event: object[];
 }
-export interface Dataset{
+
+export interface Dataset {
     dataset_name: string,
-    dataset:object
+    dataset: object
 }
-export interface Pipeline{
+
+export interface Pipeline {
     pipeline_name: string
 }
-export interface CsvImport{
+
+export interface CsvImport {
     pipeline_name: string
 }
-export interface Result{
+
+export interface Result {
     code: number,
     message?: string,
-    error?:string
+    error?: string
 }

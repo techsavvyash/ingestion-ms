@@ -83,7 +83,7 @@ export class CsvImportService {
                             if (ingestionTypeBodyArray.length > 0) {
                                 batchCounter = 0;
                                 await this.resetAndMakeAPICall(ingestionType, ingestionName, ingestionTypeBodyArray, csvReadStream, true);
-                                ingestionTypeBodyArray = []
+                                ingestionTypeBodyArray = undefined
                             }
                         } catch (apiErr) {
                             let apiErrorData: any = {};
