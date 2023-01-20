@@ -24,7 +24,5 @@ export interface CsvImport {
 export interface Result {
     code: number,
     message?: string,
-    error?: string,
-    errorCounter?: number,
-    validCounter?: number
+    error?: string
 }

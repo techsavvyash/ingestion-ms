@@ -34,12 +34,6 @@ interface CSVInputBodyInterface {
     ingestion_name: string;
 }
 
-interface CSVAPIResponse {
-    message: string;
-    invalid_record_count: number;
-    valid_record_count: number;
-}
-
 @Injectable()
 export class CsvImportService {
     constructor(private http: HttpCustomService, private service: GenericFunction) {
@@ -55,7 +49,7 @@ export class CsvImportService {
 
                 const batchLimit: number = 100000;
                 let batchCounter: number = 0,
-                    ingestionTypeBodyArray: any = [], apiResponseDataList: CSVAPIResponse[] = [];
+                    ingestionTypeBodyArray: any = [];
                 const csvReadStream = fs.createReadStream(fileCompletePath)
                     .pipe(parse({headers: true}))
                     .on('data', (csvrow) => {
@@ -72,7 +66,7 @@ export class CsvImportService {
                         if (batchCounter > batchLimit) {
                             batchCounter = 0;
                             csvReadStream.pause();
-                            this.resetAndMakeAPICall(ingestionType, ingestionName, ingestionTypeBodyArray, csvReadStream, apiResponseDataList);
+                            this.resetAndMakeAPICall(ingestionType, ingestionName, ingestionTypeBodyArray, csvReadStream);
                             ingestionTypeBodyArray = []
                         }
                     })
@@ -88,31 +82,24 @@ export class CsvImportService {
                             // flush the remaining csv data to API
                             if (ingestionTypeBodyArray.length > 0) {
                                 batchCounter = 0;
-                                await this.resetAndMakeAPICall(ingestionType, ingestionName, ingestionTypeBodyArray, csvReadStream, apiResponseDataList, true);
-                                ingestionTypeBodyArray = []
+                                await this.resetAndMakeAPICall(ingestionType, ingestionName, ingestionTypeBodyArray, csvReadStream, true);
+                                ingestionTypeBodyArray = undefined
                             }
-                            let validObject = 0, invalidObject = 0;
-                            for (let responseData of apiResponseDataList) {
-                                invalidObject += responseData.invalid_record_count;
-                                validObject += responseData.valid_record_count;
-                            }
-                            apiResponseDataList = undefined;
-                            // delete the file
-                            fs.unlinkSync(fileCompletePath);
-                            resolve({code: 200, message: 'CSV Uploaded Successfully', errorCounter: invalidObject, validCounter: validObject});
-                        } catch (err) {
+                        } catch (apiErr) {
                             let apiErrorData: any = {};
-                            apiErrorData = JSON.parse(err.message);
+                            apiErrorData = JSON.parse(apiErr.message);
                             reject({code: 400, error: apiErrorData.message});
                         }
-
+                        // delete the file
+                        fs.unlinkSync(fileCompletePath);
+                        resolve({code: 200, message: 'CSV Uploaded Successfully'});
                     });
             }
         });
     }
 
     async resetAndMakeAPICall(ingestionType: string, ingestionName: string, ingestionTypeBodyArray: any[],
-                              csvReadStream: ReadStream, apiResponseData: CSVAPIResponse[], isEnd = false) {
+                              csvReadStream: ReadStream, isEnd = false) {
         let postBody: any = {};
         const url: string = process.env.URL + `/ingestion/${ingestionType}`;
         const mainKey = ingestionType + '_name';
@@ -125,8 +112,7 @@ export class CsvImportService {
             postBody[ingestionType] = [...ingestionTypeBodyArray];
         }
         try {
-            let response = await this.http.post<CSVAPIResponse>(url, postBody);
-            apiResponseData.push(response.data);
+            await this.http.post(url, postBody);
             if (!isEnd) {
                 csvReadStream.resume();
             }
