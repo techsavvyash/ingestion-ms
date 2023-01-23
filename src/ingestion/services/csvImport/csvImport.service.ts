@@ -47,7 +47,7 @@ export class CsvImportService {
             } else {
                 const ingestionType = inputBody.ingestion_type, ingestionName = inputBody.ingestion_name;
 
-                const batchLimit: number = 100000;
+                const batchLimit: number = 200000;
                 let batchCounter: number = 0,
                     ingestionTypeBodyArray: any = [];
                 const csvReadStream = fs.createReadStream(fileCompletePath)
