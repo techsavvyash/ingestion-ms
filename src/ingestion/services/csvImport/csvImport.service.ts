@@ -117,7 +117,6 @@ export class CsvImportService {
                 csvReadStream.resume();
             }
         } catch (apiErr) {
-            console.error('csvImport.service.resetAndMakeAPICall: ', apiErr.response?.data, apiErr.message);
             if (isEnd) {
                 throw new Error(JSON.stringify(apiErr.response?.data || apiErr.message))
             } else {
