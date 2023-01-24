@@ -19,5 +19,10 @@ export const IngestionDatasetQuery = {
         LEFT JOIN spec.transformer ON transformer.pid = pipeline.transformer_pid
         WHERE pipeline_name = $1`;
         return {query: queryStr, values: [pipelineName]};
-    }
+    },
+
+    async getFileStatus(fileName) {
+        const queryStr = `SELECT file_status FROM ingestion.file_tracker WHERE filename = $1`;
+        return {query: queryStr, values: [fileName]};
+    },
 };

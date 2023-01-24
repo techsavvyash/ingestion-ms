@@ -26,3 +26,6 @@ export interface Result {
     message?: string,
     error?: string
 }
+export interface FileStatus {
+    filename?: string,
+}
