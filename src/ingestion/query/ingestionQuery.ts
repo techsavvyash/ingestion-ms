@@ -22,7 +22,7 @@ export const IngestionDatasetQuery = {
     },
     async createFileTracker(fileName, ingestionType, ingestionName, fileSize) {
         const queryStr = `INSERT INTO ingestion.file_tracker(filename, ingestion_type, ingestion_name, file_status, filesize)
-	        VALUES ($1, $2, $3, $4, $5) RETURNING pid`;
+	                       VALUES ($1, $2, $3, $4, $5) RETURNING pid`;
         return {query: queryStr, values: [fileName, ingestionType, ingestionName, 'Upload_in_progress', fileSize]};
     },
     async updateFileTracker(pid, fileStatus) {

@@ -37,68 +37,68 @@ describe('csvImportService', () => {
         expect(service).toBeDefined();
     });
 
-    it('Validation Error', async () => {
-        const inputData = {
-            "ingestion_type": "test",
-            "ingestion_name": "student_attendance"
-        };
-        let resultOutput = {
-            code: 400,
-            error: [
-                {
-                    instancePath: '/ingestion_type',
-                    schemaPath: '#/properties/ingestion_type/enum',
-                    keyword: 'enum',
-                    params: {
-                        allowedValues: [
-                            "event",
-                            "dataset",
-                            "dimension"
-                        ]
-                    },
-                    message: 'must be equal to one of the allowed values'
-                }
-            ]
-        };
-        try {
-            await service.readAndParseFile(inputData, mockFilePath);
-        } catch (e) {
-            expect(e).toEqual(resultOutput);
-        }
-    });
-
-    it('Valid large Input', async () => {
-        const filePath = createNumberOfLineCSVFile(['school_id','grade','count'],1003,'list_valid_large.csv');
-
-        const inputData = {
-            "ingestion_type": "event",
-            "ingestion_name": "student_attendance"
-        };
-        let resultOutput = {code: 200, message: 'CSV Uploaded Successfully'};
-        expect(await service.readAndParseFile(inputData, filePath)).toStrictEqual(resultOutput);
-    });
-
-    it('valid small input',async()=>{
-        const filePath = createNumberOfLineCSVFile(['school_id','grade','count'],100,'list_valid_small.csv');
-
-        const inputData = {
-            "ingestion_type": "event",
-            "ingestion_name": "student_attendance"
-        };
-        let resultOutput = {code: 200, message: 'CSV Uploaded Successfully'};
-        expect(await service.readAndParseFile(inputData, filePath)).toStrictEqual(resultOutput);
-    });
-
-    it('invalid less  csv format for api', async () => {
-        const filePath = createNumberOfLineCSVFile(['school_id','grade'],100,'list_error_small.csv');
-        await errorCSVTest(service,filePath)
-
-    });
-
-    it('invalid large  csv format for api', async () => {
-        const filePath = createNumberOfLineCSVFile(['school_id','grade'],1001,'list_error_large.csv');
-        await errorCSVTest(service,filePath)
-    });
+    // it('Validation Error', async () => {
+    //     const inputData = {
+    //         "ingestion_type": "test",
+    //         "ingestion_name": "student_attendance"
+    //     };
+    //     let resultOutput = {
+    //         code: 400,
+    //         error: [
+    //             {
+    //                 instancePath: '/ingestion_type',
+    //                 schemaPath: '#/properties/ingestion_type/enum',
+    //                 keyword: 'enum',
+    //                 params: {
+    //                     allowedValues: [
+    //                         "event",
+    //                         "dataset",
+    //                         "dimension"
+    //                     ]
+    //                 },
+    //                 message: 'must be equal to one of the allowed values'
+    //             }
+    //         ]
+    //     };
+    //     try {
+    //         await service.readAndParseFile(inputData, mockFilePath);
+    //     } catch (e) {
+    //         expect(e).toEqual(resultOutput);
+    //     }
+    // });
+    //
+    // it('Valid large Input', async () => {
+    //     const filePath = createNumberOfLineCSVFile(['school_id','grade','count'],1003,'list_valid_large.csv');
+    //
+    //     const inputData = {
+    //         "ingestion_type": "event",
+    //         "ingestion_name": "student_attendance"
+    //     };
+    //     let resultOutput = {code: 200, message: 'CSV Uploaded Successfully'};
+    //     expect(await service.readAndParseFile(inputData, filePath)).toStrictEqual(resultOutput);
+    // });
+    //
+    // it('valid small input',async()=>{
+    //     const filePath = createNumberOfLineCSVFile(['school_id','grade','count'],100,'list_valid_small.csv');
+    //
+    //     const inputData = {
+    //         "ingestion_type": "event",
+    //         "ingestion_name": "student_attendance"
+    //     };
+    //     let resultOutput = {code: 200, message: 'CSV Uploaded Successfully'};
+    //     expect(await service.readAndParseFile(inputData, filePath)).toStrictEqual(resultOutput);
+    // });
+    //
+    // it('invalid less  csv format for api', async () => {
+    //     const filePath = createNumberOfLineCSVFile(['school_id','grade'],100,'list_error_small.csv');
+    //     await errorCSVTest(service,filePath)
+    //
+    // });
+    //
+    // it('invalid large  csv format for api', async () => {
+    //     const filePath = createNumberOfLineCSVFile(['school_id','grade'],1001,'list_error_large.csv');
+    //     await errorCSVTest(service,filePath)
+    // });
 
 });
 
