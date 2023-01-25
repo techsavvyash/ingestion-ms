@@ -31,5 +31,9 @@ export const IngestionDatasetQuery = {
             updated_at = CURRENT_TIMESTAMP
             WHERE pid = $1`;
         return {query: queryStr, values: [pid, fileStatus]};
+    },
+    async getFileStatus(fileName) {
+        const queryStr = `SELECT file_status FROM ingestion.file_tracker WHERE filename = $1`;
+        return {query: queryStr, values: [fileName]};
     }
 };

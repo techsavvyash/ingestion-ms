@@ -9,9 +9,10 @@ import { PipelineService } from './services/pipeline/pipeline.service';
 import { EventService } from './services/event/event.service';
 import { GenericFunction } from './services/generic-function';
 import {CsvImportService} from "./services/csvImport/csvImport.service";
+import { FileStatusService } from './services/file-status/file-status.service';
 @Module({
     controllers: [IngestionController],
-    providers: [DatasetService,DimensionService,PipelineService,EventService ,GenericFunction, HttpCustomService, CsvImportService],
+    providers: [DatasetService,DimensionService,PipelineService,EventService ,GenericFunction, HttpCustomService, CsvImportService, FileStatusService],
     imports: [DatabaseModule, HttpModule]
 })
 export class IngestionModule {

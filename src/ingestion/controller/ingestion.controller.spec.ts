@@ -5,6 +5,7 @@ import {DimensionService} from '../services/dimension/dimension.service';
 import {EventService} from '../services/event/event.service';
 import {PipelineService} from '../services/pipeline/pipeline.service';
 import {CsvImportService} from "../services/csvImport/csvImport.service";
+import { FileStatusService } from '../services/file-status/file-status.service';
 
 describe('IngestionController', () => {
     let controller: IngestionController;
@@ -49,6 +50,14 @@ describe('IngestionController', () => {
                     provide: CsvImportService,
                     useValue: {
                         readAndParseFile: jest.fn(dto => {
+                            dto
+                        })
+                    }
+                },
+                {
+                    provide: FileStatusService,
+                    useValue: {
+                        FileStatusService: jest.fn(dto => {
                             dto
                         })
                     }
