@@ -6,6 +6,7 @@ import {
     MaxFileSizeValidator,
     ParseFilePipe,
     Post,
+    Query,
     Res,
     UploadedFile,
     UseInterceptors
@@ -125,12 +126,12 @@ export class IngestionController {
     }
 
     @Get('/file-status')
-    async getFileStatus(@Body() input:FileStatus,@Res()response: Response){
+    async getFileStatus(@Query() query:FileStatus,@Res()response: Response){
         try {
-            let result:any = await this.filestatus.getFileStatus(input);
+            let result:any = await this.filestatus.getFileStatus(query);
             if (result.code == 400) {
                 response.status(400).send({"message": result.error});
-            } else {
+            } else { 
                 response.status(200).send({"response": result.response});
             }
         }
