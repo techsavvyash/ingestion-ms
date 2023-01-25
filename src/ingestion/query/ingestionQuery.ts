@@ -19,5 +19,26 @@ export const IngestionDatasetQuery = {
         LEFT JOIN spec.transformer ON transformer.pid = pipeline.transformer_pid
         WHERE pipeline_name = $1`;
         return {query: queryStr, values: [pipelineName]};
+    },
+    async checkFileNameDuplicity(fileName, ingestionType, ingestionName) {
+        const queryStr = `SELECT pid 
+                 FROM ingestion.file_tracker
+                 WHERE filename = $1
+                 AND ingestion_type = $2
+                 AND ingestion_name= $3
+                 AND is_deleted = false`;
+        return {query: queryStr, values: [fileName, ingestionType, ingestionName]};
+    },
+    async createFileTracker(fileName, ingestionType, ingestionName, fileSize) {
+        const queryStr = `INSERT INTO ingestion.file_tracker(filename, ingestion_type, ingestion_name, file_status, filesize)
+	        VALUES ($1, $2, $3, $4, $5) RETURNING pid`;
+        return {query: queryStr, values: [fileName, ingestionType, ingestionName, 'Upload_in_progress', fileSize]};
+    },
+    async updateFileTracker(pid, fileStatus) {
+        const queryStr = `UPDATE ingestion.file_tracker
+            SET file_status = $2,
+            updated_at = CURRENT_TIMESTAMP
+            WHERE pid = $1`;
+        return {query: queryStr, values: [pid, fileStatus]};
     }
 };
