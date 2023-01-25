@@ -20,9 +20,20 @@ export const IngestionDatasetQuery = {
         WHERE pipeline_name = $1`;
         return {query: queryStr, values: [pipelineName]};
     },
-
+    async createFileTracker(fileName, ingestionType, ingestionName, fileSize) {
+        const queryStr = `INSERT INTO ingestion.file_tracker(filename, ingestion_type, ingestion_name, file_status, filesize)
+	        VALUES ($1, $2, $3, $4, $5) RETURNING pid`;
+        return {query: queryStr, values: [fileName, ingestionType, ingestionName, 'Upload_in_progress', fileSize]};
+    },
+    async updateFileTracker(pid, fileStatus) {
+        const queryStr = `UPDATE ingestion.file_tracker
+            SET file_status = $2,
+            updated_at = CURRENT_TIMESTAMP
+            WHERE pid = $1`;
+        return {query: queryStr, values: [pid, fileStatus]};
+    },
     async getFileStatus(fileName) {
         const queryStr = `SELECT file_status FROM ingestion.file_tracker WHERE filename = $1`;
         return {query: queryStr, values: [fileName]};
-    },
+    }
 };

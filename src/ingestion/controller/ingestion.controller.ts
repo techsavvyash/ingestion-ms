@@ -111,7 +111,7 @@ export class IngestionController {
         }),
     ) file: Express.Multer.File) {
         try {
-            let result = await this.csvImportService.readAndParseFile(body, file.path);
+            let result = await this.csvImportService.readAndParseFile(body, file);
             if (result.code == 400) {
                 response.status(400).send({message: result.error});
             } else {
