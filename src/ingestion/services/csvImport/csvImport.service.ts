@@ -50,19 +50,14 @@ export class CsvImportService {
                 const fileCompletePath = file.path;
                 const fileSize = file.size;
                 const fileName = file.originalname;
-                let queryStr = await IngestionDatasetQuery.checkFileNameDuplicity(fileName, inputBody.ingestion_type, inputBody.ingestion_name);
-                let queryResult = await this.DatabaseService.executeQuery(queryStr.query, queryStr.values);
-                if (queryResult.length > 0) {
-                    resolve({code: 400, error: 'FileName already exists'})
+
+                const queryStr = await IngestionDatasetQuery.createFileTracker(fileName, inputBody.ingestion_type, inputBody.ingestion_name, fileSize);
+                const queryResult = await this.DatabaseService.executeQuery(queryStr.query, queryStr.values);
+                if (queryResult.length === 1) {
+                    this.asyncProcessing(inputBody, fileCompletePath, queryResult[0].pid);
+                    resolve({code: 200, message: 'File is being processed'})
                 } else {
-                    queryStr = await IngestionDatasetQuery.createFileTracker(fileName, inputBody.ingestion_type, inputBody.ingestion_name, fileSize);
-                    queryResult = await this.DatabaseService.executeQuery(queryStr.query, queryStr.values);
-                    if (queryResult.length === 1) {
-                        this.asyncProcessing(inputBody, fileCompletePath, queryResult[0].pid);
-                        resolve({code: 200, message: 'File is being processed'})
-                    } else {
-                        resolve({code: 400, error: 'File is not Tracked'})
-                    }
+                    resolve({code: 400, error: 'File is not Tracked'})
                 }
             }
         });
