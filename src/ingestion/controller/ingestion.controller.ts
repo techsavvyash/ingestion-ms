@@ -1,4 +1,4 @@
-import {Dataset, Dimension, FileStatus, IEvent, Pipeline} from '../interfaces/Ingestion-data';
+import {Dataset, Dimension, CSVBody,FileStatus, IEvent, Pipeline} from '../interfaces/Ingestion-data';
 import {
     Body,
     Controller, FileTypeValidator,
@@ -21,12 +21,8 @@ import {FileInterceptor} from "@nestjs/platform-express";
 import {diskStorage} from "multer";
 import {FileIsDefinedValidator} from "../validators/file-is-defined-validator";
 import { FileStatusService } from '../services/file-status/file-status.service';
-
-interface CSVBody {
-    ingestion_type: string;
-    ingestion_name: string;
-}
-
+import { ApiBody, ApiConsumes, ApiProperty, ApiTags } from '@nestjs/swagger';
+@ApiTags('ingestion')
 @Controller('ingestion')
 export class IngestionController {
     constructor(
@@ -103,6 +99,7 @@ export class IngestionController {
         })
     }))
     @Post('/csv')
+    @ApiConsumes('multipart/form-data')
     async csv(@Body() body: CSVBody, @Res()response: Response, @UploadedFile(
         new ParseFilePipe({
             validators: [
