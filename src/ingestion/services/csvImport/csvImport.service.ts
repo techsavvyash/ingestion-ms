@@ -49,9 +49,9 @@ export class CsvImportService {
             } else {
                 const fileCompletePath = file.path;
                 const fileSize = file.size;
-                const fileName = file.originalname;
+                const uploadedFileName = file.originalname;
 
-                const queryStr = await IngestionDatasetQuery.createFileTracker(fileName, inputBody.ingestion_type, inputBody.ingestion_name, fileSize);
+                const queryStr = await IngestionDatasetQuery.createFileTracker(uploadedFileName, inputBody.ingestion_type, inputBody.ingestion_name, fileSize);
                 const queryResult = await this.DatabaseService.executeQuery(queryStr.query, queryStr.values);
                 if (queryResult.length === 1) {
                     this.asyncProcessing(inputBody, fileCompletePath, queryResult[0].pid);
@@ -104,7 +104,7 @@ export class CsvImportService {
                             batchCounter = 0;
                             await this.resetAndMakeAPICall(ingestionType, ingestionName, ingestionTypeBodyArray, csvReadStream, true);
                             ingestionTypeBodyArray = undefined;
-                            const queryStr = await IngestionDatasetQuery.updateFileTracker(fileTrackerPid, 'Uploaded');
+                            const queryStr = await IngestionDatasetQuery.updateFileTracker(fileTrackerPid, 'Uploaded', ingestionName);
                             await this.DatabaseService.executeQuery(queryStr.query, queryStr.values);
                         }
                     } catch (apiErr) {
