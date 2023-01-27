@@ -53,7 +53,9 @@ describe('FileStatusService', () => {
 
   it('No records found', async () => {
     let data = {
-      filename: "gggg"
+      filename: "gggg",
+      ingestion_type: "event",
+      ingestion_name: "asssd"
     }
     let result = {
       "code": 400, "error": "No records found"
@@ -64,7 +66,9 @@ describe('FileStatusService', () => {
   it('Get the file status', async () => {
 
     const Mockdata = {
-      file_status: "sdj"
+      pid: 1,
+      file_status: "sdj",
+      created_at: "2023-01-27T10:11:59.986Z"
     }
     const mockDatabaseService1 = {
       executeQuery: jest.fn().mockReturnValue([Mockdata])
@@ -88,12 +92,17 @@ describe('FileStatusService', () => {
 
 
     let data = {
-      filename: "school_details"
+      filename: "gggg",
+      ingestion_type: "event",
+      ingestion_name: "asssd"
     }
     let result = {
       "code": 200, "response": [
         {
-          "file_status": "sdj"
+          "pid": 1,
+          "file_status": "sdj",
+          created_at: "2023-01-27T10:11:59.986Z"
+
         }
       ]
     }
@@ -104,6 +113,7 @@ describe('FileStatusService', () => {
 
     const Mockdata = {
       file_status: "sdj"
+
     }
     const mockError = {
       executeQuery: jest.fn().mockImplementation(() => {
@@ -128,7 +138,9 @@ describe('FileStatusService', () => {
     service = module.get<FileStatusService>(FileStatusService);
 
     let data = {
-      filename: "dfdf"
+      filename: "gggg",
+      ingestion_type: "event",
+      ingestion_name: "asssd"
     }
     let resultOutput = "Error: exception test";
 

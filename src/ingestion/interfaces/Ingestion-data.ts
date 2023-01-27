@@ -26,6 +26,8 @@ export interface Result {
     message?: string,
     error?: string
 }
-export interface FileStatus {
-    filename?: string,
+export class FileStatus {
+    filename?: string
+    ingestion_type?: string
+    ingestion_name?: string
 }
