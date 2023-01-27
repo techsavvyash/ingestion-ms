@@ -16,9 +16,9 @@ describe('csvImportService', () => {
         post: jest.fn()
     };
     const mockDatabaseService = {
-        executeQuery: jest.fn().mockReturnValueOnce([]).mockReturnValueOnce([{pid:1}])
+        executeQuery: jest.fn().mockReturnValueOnce([]).mockReturnValueOnce([{ pid: 1 }])
     }
-   
+
     const file: Express.Multer.File = {
         originalname: 'file.csv',
         mimetype: 'text/csv',
@@ -30,7 +30,7 @@ describe('csvImportService', () => {
         stream: new Readable,
         destination: '',
         filename: ''
-    }; 
+    };
     beforeEach(async () => {
         const module: TestingModule = await Test.createTestingModule({
             providers: [HttpCustomService, GenericFunction, CsvImportService, DatabaseService,
@@ -89,20 +89,19 @@ describe('csvImportService', () => {
     });
 
     it('File is not Tracked', async () => {
-        const filePath = createNumberOfLineCSVFile(['school_id','grade','count'],1003,'list_valid_large.csv');
-    
+        const filePath = createNumberOfLineCSVFile(['school_id', 'grade', 'count'], 1003, 'list_valid_large.csv');
+
         const inputData = {
             "ingestion_type": "event",
             "ingestion_name": "student_attendance"
         };
-        let resultOutput = {"code": 400,  "error": "File is not Tracked"};
+        let resultOutput = { "code": 400, "error": "File is not Tracked" };
         expect(await service.readAndParseFile(inputData, file)).toStrictEqual(resultOutput);
     });
 
-    it('File is being processed',  async () => {
+    it('File is being processed', async () => {
 
-        const filePath = createNumberOfLineCSVFile(['school_id','grade','count'],1003,'file.csv');
-        console.log('da',filePath);
+        const filePath = createNumberOfLineCSVFile(['school_id', 'grade', 'count'], 1003, 'file.csv');
         let file1: Express.Multer.File = {
             originalname: 'file.csv',
             mimetype: 'text/csv',
@@ -114,19 +113,19 @@ describe('csvImportService', () => {
             stream: new Readable,
             destination: '',
             filename: ''
-        }; 
+        };
         const inputData = {
             "ingestion_type": "event",
             "ingestion_name": "student_attendance"
         };
-        
-        let resultOutput = {code: 200, message: 'File is being processed'};
+
+        let resultOutput = { code: 200, message: 'File is being processed' };
         expect(await service.readAndParseFile(inputData, file1)).toStrictEqual(resultOutput);
     });
 
-    it('CSV Uploaded Successfully',  async () => {
+    it('CSV Uploaded Successfully', async () => {
 
-        const filePath = createNumberOfLineCSVFile(['school_id','grade','count'],1003,'file1.csv');
+        const filePath = createNumberOfLineCSVFile(['school_id', 'grade', 'count'], 1003, 'file1.csv');
         let file1: Express.Multer.File = {
             originalname: 'file1.csv',
             mimetype: 'text/csv',
@@ -138,16 +137,94 @@ describe('csvImportService', () => {
             stream: new Readable,
             destination: '',
             filename: ''
-        }; 
+        };
         const inputData = {
             "ingestion_type": "event",
             "ingestion_name": "student_attendance"
         };
-        
-        let resultOutput = {code: 200,  "message": "CSV Uploaded Successfully"};
-        expect(await service.asyncProcessing(inputData, file1.path,1)).toStrictEqual(resultOutput);
+
+        let resultOutput = { code: 200, "message": "CSV Uploaded Successfully" };
+        expect(await service.asyncProcessing(inputData, file1.path, 1)).toStrictEqual(resultOutput);
     });
 
+    // test('it should make a successful API call and resume the stream', async () => {
+
+    //     const mockHttp = {
+    //         post: jest.fn().mockResolvedValue(true)
+    //     };
+    //     const mockCsvReadStream = {
+    //         resume: jest.fn(),
+    //         destroy: jest.fn()
+    //     };
+    //     const module: TestingModule = await Test.createTestingModule({
+    //         providers: [HttpCustomService, GenericFunction, CsvImportService, DatabaseService,
+    //             {
+    //                 provide: HttpCustomService,
+    //                 useValue: mockHttp
+    //             },
+    //             {
+    //                 provide: GenericFunction,
+    //                 useClass: GenericFunction
+    //             },
+    //             {
+    //                 provide: DatabaseService,
+    //                 useValue: mockDatabaseService
+    //             },
+    //             {
+    //                 provide: CsvImportService,
+    //                 useClass: CsvImportService
+    //             }],
+    //     }).compile();
+    //     let ingestionTypeBodyArray = []
+    //     service = module.get<CsvImportService>(CsvImportService);
+    //     await service.resetAndMakeAPICall('dataset', 'ingestionName', [], );
+    //     expect(mockHttp.post).toHaveBeenCalled();
+    //     expect(mockCsvReadStream.resume).toHaveBeenCalled();
+    //     expect(mockCsvReadStream.destroy).not.toHaveBeenCalled();
+    // });
+
+    // it('it should make an unsuccessful API call and throw an error', async () => {
+
+    //     const mockHttp = {
+    //         post: jest.fn().mockRejectedValue({ response: { data: 'API error' } })
+    //     };
+    //     const filePath1 = createNumberOfLineCSVFile(['school_id', 'grade', 'count'], 1003, 'file.csv');
+    //     let file1: Express.Multer.File = {
+    //         originalname: 'file.csv',
+    //         mimetype: 'text/csv',
+    //         path: filePath1,
+    //         buffer: Buffer.from('one,two,three'),
+    //         fieldname: '',
+    //         encoding: '',
+    //         size: 0,
+    //         stream: new Readable,
+    //         destination: '',
+    //         filename: ''
+            
+    //     };
+    //     const module: TestingModule = await Test.createTestingModule({
+    //         providers: [HttpCustomService, GenericFunction, CsvImportService, DatabaseService,
+    //             {
+    //                 provide: HttpCustomService,
+    //                 useValue: mockHttp
+    //             },
+    //             {
+    //                 provide: GenericFunction,
+    //                 useClass: GenericFunction
+    //             },
+    //             {
+    //                 provide: DatabaseService,
+    //                 useValue: mockDatabaseService
+    //             },
+    //             {
+    //                 provide: CsvImportService,
+    //                 useClass: CsvImportService
+    //             }],
+    //     }).compile();
+    //     let ingestionTypeBodyArray = []
+    //     service = module.get<CsvImportService>(CsvImportService);
+    //     await expect(service.resetAndMakeAPICall('dataset', 'ingestionName', [] , file1,true)).rejects.toThrowError('"API error"');
+    // });
 
 
 
@@ -234,3 +311,4 @@ const createFile = (
     fs.writeFileSync(`${path}/${fileName}`, data, 'utf8');
 
 };
+
