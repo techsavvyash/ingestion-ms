@@ -55,7 +55,7 @@ export class UpdateFileStatusService {
             } else {
                 let queryStr = await IngestionDatasetQuery.getFile(inputData.file_name, inputData.ingestion_type, inputData.ingestion_name);
                 let queryResult = await this.DatabaseService.executeQuery(queryStr.query, queryStr.values);
-                if (queryResult.length > 0) {
+                if (queryResult?.length > 0) {
                     let processedCount, datasetCount;
                     for (let files of queryResult) {
                         //check the status
@@ -65,7 +65,7 @@ export class UpdateFileStatusService {
                             if ((inputData.status).substring(0, 9) === 'Completed') {
                                 queryStr = await IngestionDatasetQuery.updateFileProcessedCount(files.pid);
                                 queryResult = await this.DatabaseService.executeQuery(queryStr.query, queryStr.values);
-                                if (queryResult.length > 0) {
+                                if (queryResult?.length > 0) {
                                     processedCount = queryResult[0].processed_count;
                                     queryStr = await IngestionDatasetQuery.getDatasetCount(inputData.ingestion_name);
                                     queryResult = await this.DatabaseService.executeQuery(queryStr.query, queryStr.values);

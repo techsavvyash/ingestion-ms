@@ -26,14 +26,6 @@ export class Pipeline {
     pipeline_name: string
 }
 
-export class CsvImport {
-    @ApiProperty()
-    file: string
-    @ApiProperty()
-    ingestion_type: string
-    @ApiProperty()
-    ingestion_name: string
-}
 
 export interface Result {
     code: number,
@@ -57,4 +49,15 @@ export class CSVBody {
     ingestion_type: string;
     @ApiProperty({type: 'string'})
     ingestion_name: string;
+}
+
+export class FileStatusInterface {
+    @ApiProperty()
+    file_name: string;    
+    @ApiProperty()
+    ingestion_type: string;
+    @ApiProperty()
+    ingestion_name: string;
+    @ApiProperty()
+    status: string;
 }
