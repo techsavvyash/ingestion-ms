@@ -1,4 +1,4 @@
-import { ApiProperty } from "@nestjs/swagger";
+import {ApiProperty} from "@nestjs/swagger";
 
 export class Dimension {
     @ApiProperty()
@@ -28,11 +28,11 @@ export class Pipeline {
 
 export class CsvImport {
     @ApiProperty()
-    file:string
+    file: string
     @ApiProperty()
-    ingestion_type:string
+    ingestion_type: string
     @ApiProperty()
-    ingestion_name:string
+    ingestion_name: string
 }
 
 export interface Result {
@@ -40,6 +40,7 @@ export interface Result {
     message?: string,
     error?: string
 }
+
 export class FileStatus {
     @ApiProperty()
     filename?: string
@@ -50,10 +51,10 @@ export class FileStatus {
 }
 
 export class CSVBody {
-    @ApiProperty({ type: 'string', format: 'binary', required: true })
-    file: Express.Multer.File
-    @ApiProperty({ type: 'string' })
+    @ApiProperty({type: 'string', format: 'binary', required: true})
+    file: Express.Multer.File;
+    @ApiProperty({type: 'string'})
     ingestion_type: string;
-    @ApiProperty({ type: 'string' })
+    @ApiProperty({type: 'string'})
     ingestion_name: string;
 }
