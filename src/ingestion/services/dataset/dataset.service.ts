@@ -16,18 +16,24 @@ export class DatasetService {
                 const queryStr = await IngestionDatasetQuery.getDataset(datasetName);
                 const queryResult = await this.DatabaseService.executeQuery(queryStr.query, queryStr.values);
                 if (queryResult?.length === 1) {
-                    const isValidSchema: any = await this.service.ajvValidator(queryResult[0].dataset_data.input, inputData);
-                    if (isValidSchema.errors) {
-                        return {
-                            
-                            code: 400,
-                            error: isValidSchema.errors
+                    if (inputData.dataset) {
+                        const isValidSchema: any = await this.service.ajvValidator(queryResult[0].dataset_data.input.properties.dataset.properties.items, inputData.dataset?.items);
+                        if (isValidSchema.errors) {
+                            return {
+                                code: 400,
+                                error: isValidSchema.errors
+                            }
+                        } else {
+                            await this.service.writeToCSVFile(datasetName, inputData.dataset["items"]);
+                            return {
+                                code: 200,
+                                message: "Dataset added successfully"
+                            }
                         }
                     } else {
-                        await this.service.writeToCSVFile(datasetName, inputData.dataset["items"]);
                         return {
-                            code: 200,
-                            message: "Dataset added successfully"
+                            code: 400,
+                            error: "dataset object is required"
                         }
                     }
                 }

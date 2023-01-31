@@ -18,7 +18,7 @@ export class Dataset {
     @ApiProperty()
     dataset_name: string
     @ApiProperty()
-    dataset: {}
+    dataset: any
 }
 
 export class Pipeline {
