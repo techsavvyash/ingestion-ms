@@ -238,8 +238,8 @@ describe('DatasetService', () => {
             {
                 code: 400, error: [
                     {
-                        "instancePath": "/dataset/items/0/school_id",
-                        "schemaPath": "#/properties/dataset/properties/items/items/properties/school_id/type",
+                        "instancePath": "/0/school_id",
+                        "schemaPath": "#/items/properties/school_id/type",
                         "keyword": "type",
                         "params": {
                             "type": "string"

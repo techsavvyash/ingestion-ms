@@ -1,4 +1,4 @@
-import {Dataset, Dimension, FileStatus, IEvent, Pipeline} from '../interfaces/Ingestion-data';
+import {Dataset, Dimension,FileStatusInterface, CSVBody, FileStatus, IEvent, Pipeline} from '../interfaces/Ingestion-data';
 import {
     Body,
     Controller, FileTypeValidator,
@@ -6,9 +6,11 @@ import {
     MaxFileSizeValidator,
     ParseFilePipe,
     Post,
+    Query,
     Res,
     UploadedFile,
-    UseInterceptors
+    UseInterceptors,
+    Put
 } from '@nestjs/common';
 import {DatasetService} from '../services/dataset/dataset.service';
 import {DimensionService} from '../services/dimension/dimension.service';
@@ -19,19 +21,17 @@ import {CsvImportService} from "../services/csvImport/csvImport.service";
 import {FileInterceptor} from "@nestjs/platform-express";
 import {diskStorage} from "multer";
 import {FileIsDefinedValidator} from "../validators/file-is-defined-validator";
-import { FileStatusService } from '../services/file-status/file-status.service';
+import {FileStatusService} from '../services/file-status/file-status.service';
+import {UpdateFileStatusService} from '../services/update-file-status/update-file-status.service';
+import {ApiConsumes,ApiTags} from '@nestjs/swagger';
 
-interface CSVBody {
-    ingestion_type: string;
-    ingestion_name: string;
-}
-
+@ApiTags('ingestion')
 @Controller('ingestion')
 export class IngestionController {
     constructor(
         private datasetservice: DatasetService, private dimesionService: DimensionService
         , private eventService: EventService, private pipelineService: PipelineService, private csvImportService: CsvImportService
-        ,private filestatus:FileStatusService) {
+        , private filestatus: FileStatusService, private updateFileStatus: UpdateFileStatusService) {
     }
 
     @Post('/dataset')
@@ -102,6 +102,7 @@ export class IngestionController {
         })
     }))
     @Post('/csv')
+    @ApiConsumes('multipart/form-data')
     async csv(@Body() body: CSVBody, @Res()response: Response, @UploadedFile(
         new ParseFilePipe({
             validators: [
@@ -111,7 +112,7 @@ export class IngestionController {
         }),
     ) file: Express.Multer.File) {
         try {
-            let result = await this.csvImportService.readAndParseFile(body, file.path);
+            let result = await this.csvImportService.readAndParseFile(body, file);
             if (result.code == 400) {
                 response.status(400).send({message: result.error});
             } else {
@@ -125,9 +126,9 @@ export class IngestionController {
     }
 
     @Get('/file-status')
-    async getFileStatus(@Body() input:FileStatus,@Res()response: Response){
+    async getFileStatus(@Query() query: FileStatus, @Res()response: Response) {
         try {
-            let result:any = await this.filestatus.getFileStatus(input);
+            let result: any = await this.filestatus.getFileStatus(query);
             if (result.code == 400) {
                 response.status(400).send({"message": result.error});
             } else {
@@ -136,6 +137,22 @@ export class IngestionController {
         }
         catch (e) {
             console.error('get-filestatus-impl: ', e.message);
+            throw new Error(e);
+        }
+    }
+
+    @Put('/file-status')
+    async updateFileStatusService(@Body() inputData: FileStatusInterface, @Res()response: Response) {
+        try {
+            let result: any = await this.updateFileStatus.UpdateFileStatus(inputData);
+            if (result.code == 400) {
+                response.status(400).send({"message": result.error});
+            } else {
+                response.status(200).send({"message": result.message, "ready_to_archive": result.ready_to_archive});
+            }
+        }
+        catch (e) {
+            console.error('ingestion.controller.updateFileStatusService: ', e.message);
             throw new Error(e);
         }
     }

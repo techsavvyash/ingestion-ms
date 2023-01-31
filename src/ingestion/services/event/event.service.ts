@@ -24,7 +24,7 @@ export class EventService {
                             error: isValidSchema.errors
                         }
                     } else {
-                        await this.service.writeToCSVFile(eventName + '_event', inputData.event);
+                        await this.service.writeToCSVFile(eventName, inputData.event);
                         return {
                             code: 200,
                             message: "Event added successfully"

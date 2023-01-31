@@ -5,9 +5,11 @@ import {DimensionService} from '../services/dimension/dimension.service';
 import {EventService} from '../services/event/event.service';
 import {PipelineService} from '../services/pipeline/pipeline.service';
 import {CsvImportService} from "../services/csvImport/csvImport.service";
-import { FileStatusService } from '../services/file-status/file-status.service';
+import {FileStatusService} from '../services/file-status/file-status.service';
+import {UpdateFileStatusService} from '../services/update-file-status/update-file-status.service';
 
 describe('IngestionController', () => {
+
     let controller: IngestionController;
     beforeEach(async () => {
         const module: TestingModule = await Test.createTestingModule({
@@ -58,6 +60,14 @@ describe('IngestionController', () => {
                     provide: FileStatusService,
                     useValue: {
                         FileStatusService: jest.fn(dto => {
+                            dto
+                        })
+                    }
+                },
+                {
+                    provide: UpdateFileStatusService,
+                    useValue: {
+                        UpdateFileStatusService: jest.fn(dto => {
                             dto
                         })
                     }

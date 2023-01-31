@@ -23,7 +23,7 @@ export class DimensionService {
                             error: isValidSchema.errors
                         }
                     } else {
-                        await this.service.writeToCSVFile(dimensionName + '_dimension', inputData.dimension);
+                        await this.service.writeToCSVFile(dimensionName, inputData.dimension);
                         return {
                             code: 200,
                             message: "Dimension added successfully"

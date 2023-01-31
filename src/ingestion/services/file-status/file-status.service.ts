@@ -2,12 +2,12 @@ import { Injectable } from '@nestjs/common';
 import { GenericFunction } from '../generic-function';
 import { DatabaseService } from '../../../database/database.service';
 import { IngestionDatasetQuery } from '../../query/ingestionQuery';
-import {FileStatus} from './../../interfaces/Ingestion-data';
+import { FileStatus } from './../../interfaces/Ingestion-data';
 
 @Injectable()
 export class FileStatusService {
     constructor(private DatabaseService: DatabaseService, private service: GenericFunction,) { }
-    async getFileStatus(inputData:FileStatus) {
+    async getFileStatus(inputData: FileStatus) {
         try {
             let getFileSchema = {
                 "input": {
@@ -17,21 +17,37 @@ export class FileStatusService {
                             "type": "string",
                             "shouldnotnull": true
                         },
+                        "ingestion_type": {
+                            "type": "string",
+                            "enum": [
+                                "event",
+                                "dataset",
+                                "dimension"
+                            ],
+                            "shouldnotnull": true
+                        },
+                        "ingestion_name": {
+                            "type": "string",
+                            "shouldnotnull": true
+                        },
 
                     },
                     "required": [
-                        "filename"
+                        "filename",
+                        "ingestion_type",
+                        "ingestion_name"
                     ]
                 }
             };
             const FileName = inputData.filename;
-            
-            const isValidSchema: any = await  this.service.ajvValidator(getFileSchema.input, inputData);
+            const ingestionType = inputData.ingestion_type;
+            const ingestionName = inputData.ingestion_name;
+            const isValidSchema: any = await this.service.ajvValidator(getFileSchema.input, inputData);
             if (isValidSchema.errors) {
                 return { code: 400, error: isValidSchema.errors }
             }
             else {
-                const queryStr = await IngestionDatasetQuery.getFileStatus(FileName);
+                const queryStr = await IngestionDatasetQuery.getFileStatus(FileName, ingestionType, ingestionName);
                 const queryResult = await this.DatabaseService.executeQuery(queryStr.query, queryStr.values);
                 if (queryResult.length > 0) {
                     return {
