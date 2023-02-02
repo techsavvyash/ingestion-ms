@@ -101,7 +101,7 @@ describe('MyService', () => {
     let result = {
       code: 200,
       message: "File status updated successfully",
-      ready_to_archive: true
+      ready_to_archive: false
     }
 
     expect(await service.UpdateFileStatus(input)).toStrictEqual(result)
