@@ -62,7 +62,7 @@ export class UpdateFileStatusService {
                         if (files.file_status !== 'Upload_in_progress' && files.file_status !== 'Error' && files.file_status !== 'Ready_to_archive') {
                             queryStr = await IngestionDatasetQuery.updateFileStatus(files.pid, inputData.status);
                             await this.DatabaseService.executeQuery(queryStr.query, queryStr.values);
-                            if ((inputData.status).substring(0, 9) === 'Completed') {
+                            if ((inputData.status).substring(0, 9) === 'Completed' && inputData.ingestion_type === 'event') {
                                 queryStr = await IngestionDatasetQuery.updateFileProcessedCount(files.pid);
                                 queryResult = await this.DatabaseService.executeQuery(queryStr.query, queryStr.values);
                                 if (queryResult?.length > 0) {
@@ -78,7 +78,7 @@ export class UpdateFileStatusService {
                             }
                         }
                     }
-                    if ((datasetCount !== undefined && processedCount !== undefined) &&datasetCount == processedCount) {
+                    if (inputData.ingestion_type === 'event' || (datasetCount !== undefined && processedCount !== undefined) && datasetCount == processedCount) {
                         return {
                             code: 200,
                             message: "File status updated successfully",
