@@ -76,10 +76,15 @@ export class UpdateFileStatusService {
                                         await this.DatabaseService.executeQuery(queryStr.query, queryStr.values);
                                     }
                                 }
+                            } else {
+                                if ((inputData.status).substring(0, 9) === 'Completed' && inputData.ingestion_type !== 'event') {
+                                    queryStr = await IngestionDatasetQuery.updateFileStatus(files.pid, 'Ready_to_archive');
+                                    await this.DatabaseService.executeQuery(queryStr.query, queryStr.values);
+                                }
                             }
                         }
                     }
-                    if (inputData.ingestion_type === 'event' || (datasetCount !== undefined && processedCount !== undefined) && datasetCount == processedCount) {
+                    if (inputData.ingestion_type === 'dimension' || inputData.ingestion_type === 'dataset' || (datasetCount !== undefined && processedCount !== undefined) && datasetCount == processedCount) {
                         return {
                             code: 200,
                             message: "File status updated successfully",
