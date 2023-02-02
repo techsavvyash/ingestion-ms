@@ -34,17 +34,20 @@ describe('FileStatusService', () => {
 
   it('File name cannot be empty', async () => {
     let data = {
+      "filename":"asd",
+      "ingestion_type":"event",
+      "ingestion_name":"ss"
     }
     let result = {
       code: 400, error: [
         {
-          "instancePath": "",
-          "schemaPath": "#/required",
-          "keyword": "required",
+          "instancePath": "/filename",
+          "schemaPath": "#/properties/filename/pattern",
+          "keyword": "pattern",
           "params": {
-            "missingProperty": "filename"
+              "pattern": "^.*.(csv)$"
           },
-          "message": "must have required property 'filename'"
+          "message": "must match pattern \"^.*.(csv)$\""
         }
       ]
     }
@@ -53,7 +56,7 @@ describe('FileStatusService', () => {
 
   it('No records found', async () => {
     let data = {
-      filename: "gggg",
+      filename: "gggg.csv",
       ingestion_type: "event",
       ingestion_name: "asssd"
     }
@@ -92,7 +95,7 @@ describe('FileStatusService', () => {
 
 
     let data = {
-      filename: "gggg",
+      filename: "gggg.csv",
       ingestion_type: "event",
       ingestion_name: "asssd"
     }
