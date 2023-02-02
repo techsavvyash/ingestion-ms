@@ -90,7 +90,7 @@ export class CsvImportService {
                     }
                 })
                 .on('error', async (err) => {
-                    console.error('Steam error -> : ', err);
+                    console.error('csvImport.service:asyncProcessing:Steam error: ', err);
                     // delete the file
                     fs.unlinkSync(fileCompletePath);
                     const queryStr = await IngestionDatasetQuery.updateFileTracker(fileTrackerPid, 'Error');
