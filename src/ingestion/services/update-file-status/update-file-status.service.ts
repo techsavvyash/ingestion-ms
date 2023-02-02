@@ -1,7 +1,7 @@
-import {Injectable} from "@nestjs/common";
-import {GenericFunction} from "../generic-function";
-import {DatabaseService} from "../../../database/database.service";
-import {IngestionDatasetQuery} from "../../query/ingestionQuery";
+import { Injectable } from "@nestjs/common";
+import { GenericFunction } from "../generic-function";
+import { DatabaseService } from "../../../database/database.service";
+import { IngestionDatasetQuery } from "../../query/ingestionQuery";
 
 interface FileStatusInterface {
     file_name: string;
@@ -22,6 +22,7 @@ export class UpdateFileStatusService {
                 "properties": {
                     "file_name": {
                         "type": "string",
+                        "pattern":"^.*\.(csv)$",
                         "shouldnotnull": true
                     },
                     "ingestion_type": {
