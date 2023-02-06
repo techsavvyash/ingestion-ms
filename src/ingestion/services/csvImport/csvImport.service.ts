@@ -76,7 +76,7 @@ export class CsvImportService {
                     let numberChecking: number;
                     for (let key in csvrow) {
                         numberChecking = Number(csvrow[key]);
-                        if (!isNaN(numberChecking)) {
+                        if (!key.includes('_id') && !isNaN(numberChecking)) {
                             csvrow[key] = numberChecking;
                         }
                     }
@@ -90,7 +90,7 @@ export class CsvImportService {
                     }
                 })
                 .on('error', async (err) => {
-                    console.error('Steam error -> : ', err);
+                    console.error('csvImport.service:asyncProcessing:Steam error: ', err);
                     // delete the file
                     fs.unlinkSync(fileCompletePath);
                     const queryStr = await IngestionDatasetQuery.updateFileTracker(fileTrackerPid, 'Error');

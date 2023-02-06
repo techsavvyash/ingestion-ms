@@ -1,7 +1,7 @@
-import {Injectable} from "@nestjs/common";
-import {GenericFunction} from "../generic-function";
-import {DatabaseService} from "../../../database/database.service";
-import {IngestionDatasetQuery} from "../../query/ingestionQuery";
+import { Injectable } from "@nestjs/common";
+import { GenericFunction } from "../generic-function";
+import { DatabaseService } from "../../../database/database.service";
+import { IngestionDatasetQuery } from "../../query/ingestionQuery";
 
 interface FileStatusInterface {
     file_name: string;
@@ -22,6 +22,7 @@ export class UpdateFileStatusService {
                 "properties": {
                     "file_name": {
                         "type": "string",
+                        "pattern":"^.*\.(csv)$",
                         "shouldnotnull": true
                     },
                     "ingestion_type": {
@@ -62,7 +63,7 @@ export class UpdateFileStatusService {
                         if (files.file_status !== 'Upload_in_progress' && files.file_status !== 'Error' && files.file_status !== 'Ready_to_archive') {
                             queryStr = await IngestionDatasetQuery.updateFileStatus(files.pid, inputData.status);
                             await this.DatabaseService.executeQuery(queryStr.query, queryStr.values);
-                            if ((inputData.status).substring(0, 9) === 'Completed') {
+                            if ((inputData.status).substring(0, 9) === 'Completed' && inputData.ingestion_type === 'event') {
                                 queryStr = await IngestionDatasetQuery.updateFileProcessedCount(files.pid);
                                 queryResult = await this.DatabaseService.executeQuery(queryStr.query, queryStr.values);
                                 if (queryResult?.length > 0) {
@@ -75,10 +76,15 @@ export class UpdateFileStatusService {
                                         await this.DatabaseService.executeQuery(queryStr.query, queryStr.values);
                                     }
                                 }
+                            } else {
+                                if ((inputData.status).substring(0, 9) === 'Completed' && inputData.ingestion_type !== 'event') {
+                                    queryStr = await IngestionDatasetQuery.updateFileStatus(files.pid, 'Ready_to_archive');
+                                    await this.DatabaseService.executeQuery(queryStr.query, queryStr.values);
+                                }
                             }
                         }
                     }
-                    if ((datasetCount !== undefined && processedCount !== undefined) &&datasetCount == processedCount) {
+                    if (inputData.ingestion_type === 'dimension' || inputData.ingestion_type === 'dataset' || (datasetCount !== undefined && processedCount !== undefined) && datasetCount == processedCount) {
                         return {
                             code: 200,
                             message: "File status updated successfully",
