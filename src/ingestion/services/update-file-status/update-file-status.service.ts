@@ -1,7 +1,7 @@
-import { Injectable } from "@nestjs/common";
-import { GenericFunction } from "../generic-function";
-import { DatabaseService } from "../../../database/database.service";
-import { IngestionDatasetQuery } from "../../query/ingestionQuery";
+import {Injectable} from "@nestjs/common";
+import {GenericFunction} from "../generic-function";
+import {DatabaseService} from "../../../database/database.service";
+import {IngestionDatasetQuery} from "../../query/ingestionQuery";
 
 interface FileStatusInterface {
     file_name: string;
@@ -22,7 +22,7 @@ export class UpdateFileStatusService {
                 "properties": {
                     "file_name": {
                         "type": "string",
-                        "pattern":"^.*\.(csv)$",
+                        "pattern": "^.*\.(csv)$",
                         "shouldnotnull": true
                     },
                     "ingestion_type": {
@@ -84,7 +84,8 @@ export class UpdateFileStatusService {
                             }
                         }
                     }
-                    if (inputData.ingestion_type === 'dimension' || inputData.ingestion_type === 'dataset' || (datasetCount !== undefined && processedCount !== undefined) && datasetCount == processedCount) {
+                    if ((inputData.ingestion_type === 'dimension' && (inputData.status).substring(0, 9) === 'Completed') || (inputData.ingestion_type === 'dataset' && (inputData.status).substring(0, 9) === 'Completed')
+                        || (datasetCount !== undefined && processedCount !== undefined) && datasetCount == processedCount) {
                         return {
                             code: 200,
                             message: "File status updated successfully",
